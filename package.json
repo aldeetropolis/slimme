@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/annisaristya/slimme/issues"
   },
-  "homepage": "https://github.com/annisaristya/slimme#readme"
+  "homepage": "https://github.com/annisaristya/slimme#readme",
+  "dependencies": {
+    "sqlite3": "^4.0.0"
+  }
 }

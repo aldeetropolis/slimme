@@ -1,0 +1,22 @@
+{
+  "name": "slimme",
+  "version": "1.0.0",
+  "description": "create NodeJS based webhooks for API AI",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm search"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annisaristya/slimme.git"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "annisaristya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/annisaristya/slimme/issues"
+  },
+  "homepage": "https://github.com/annisaristya/slimme#readme"
+}

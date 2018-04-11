@@ -1,5 +1,5 @@
 // Create apiKey.js and export the const named API_KEY from there
-const API_KEY = 'YOUR_API_KEY_HERE';
+const API_KEY = 'TEST_KEY';
 module.exports = API_KEY;
 
 // Create a server,  body-parser to parse incoming request bodies, http

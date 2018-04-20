@@ -52,11 +52,11 @@ db.close((err) => {
 */ 
 const RapidAPI = require('rapidapi-connect');
 const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd", "16a6f4ee-836d-43d3-85d2-370fbebc324c");
-server.get('/get-calorie',(req,res)=>{
-	console.log(req.query.what)
+server.post('/get-calorie',(req,res)=>{
+	console.log(req.body.what)
 	rapid.call('Nutritionix', 'getFoodsNutrients', { 
 	 'applicationId': '4c64f5c3',
-	 'foodDescription': req.query.what,
+	 'foodDescription': req.body.what,
 	 'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
 	}).on('success', (payload)=>{ 
 	 res.send(payload[0]);  

@@ -57,7 +57,7 @@ rapid.call('Nutritionix', 'getFoodsNutrients', {
 	'applicationId': '4c64f5c3',
 	'foodDescription': 'fried rice 1 cup',
 	'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
-
+    
 }).on('success', (payload)=>{
 	 /*YOUR CODE GOES HERE*/ 
 }).on('error', (payload)=>{
@@ -78,4 +78,8 @@ rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {
 	 /*YOUR CODE GOES HERE*/ 
 }).on('error', (payload)=>{
 	 /*YOUR CODE GOES HERE*/ 
+});
+
+server.listen((process.env.PORT || 8000), () => {
+    console.log("Server is up and running...");
 });

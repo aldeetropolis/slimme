@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/annisaristya/slimme#readme",
   "dependencies": {
+    "rapidapi-connect": "0.0.6",
     "sqlite3": "^4.0.0"
   }
 }

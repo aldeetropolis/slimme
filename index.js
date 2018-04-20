@@ -1,7 +1,3 @@
-// Create apiKey.js and export the const named API_KEY from there
-const API_KEY = 'ad4538d485233756557afd8aee6f530b';
-module.exports = API_KEY;
-
 // import sqlite module
 const sqlite3 = require('sqlite3');
 
@@ -21,6 +17,7 @@ server.use(bodyParser.urlencoded({
 server.use(bodyParser.json());
 
 // create sqlite database project in memory
+/*
 let db = new sqlite3.Database('./userdata.db', (err) => {
     if (err) {
       console.error(err.message);
@@ -47,37 +44,40 @@ db.close((err) => {
     console.log('Close the database connection.');
   });
 
+*/
+server.get('/get-calorie', (req, res) => {
 
-// Get Food nutrients using Nutritionix.getFoodsNutrients API
+    // Get Food nutrients using Nutritionix.getFoodsNutrients API
 
-const RapidAPI = require('rapidapi-connect');
-const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd", "16a6f4ee-836d-43d3-85d2-370fbebc324c");
+    const RapidAPI = require('rapidapi-connect');
+    const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd", "16a6f4ee-836d-43d3-85d2-370fbebc324c");
 
-rapid.call('Nutritionix', 'getFoodsNutrients', { 
-	'applicationId': '4c64f5c3',
-	'foodDescription': 'fried rice 1 cup',
-	'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
+    rapid.call('Nutritionix', 'getFoodsNutrients', { 
+	    'applicationId': '4c64f5c3',
+	    'foodDescription': 'fried rice 1 cup',
+	    'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
     
-}).on('success', (payload)=>{
-	 /*YOUR CODE GOES HERE*/ 
-}).on('error', (payload)=>{
-	 /*YOUR CODE GOES HERE*/ 
+    }).on('success', (payload)=>{
+	    res.send(payload[0]); 
+    }).on('error', (payload)=>{
+	    console.log(payload)
+    });
 });
 
-// Get Calories burned estimation using Nutritionix.getCaloriesBurnedForExercises API
+server.get('/get-burncalorie', (req, res) => {
 
-const RapidAPI = require('rapidapi-connect');
-const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd", "16a6f4ee-836d-43d3-85d2-370fbebc324c");
+    // Get Calories burned estimation using Nutritionix.getCaloriesBurnedForExercises API
+    
+    rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', { 
+	    'exerciseDescription': 'yoga 30 minutes',
+	    'applicationSecret': 'ad4538d485233756557afd8aee6f530b',
+	    'applicationId': '4c64f5c3'
 
-rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', { 
-	'exerciseDescription': 'yoga 30 minutes',
-	'applicationSecret': 'ad4538d485233756557afd8aee6f530b',
-	'applicationId': '4c64f5c3'
-
-}).on('success', (payload)=>{
-	 /*YOUR CODE GOES HERE*/ 
-}).on('error', (payload)=>{
-	 /*YOUR CODE GOES HERE*/ 
+    }).on('success', (payload)=>{
+	    console.log(payload[0]) 
+    }).on('error', (payload)=>{
+        console.log(payload) 
+    });
 });
 
 server.listen((process.env.PORT || 8000), () => {

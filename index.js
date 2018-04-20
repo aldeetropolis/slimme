@@ -80,6 +80,6 @@ server.get('/get-burncalorie', (req, res) => {
     });
 });
 
-server.listen(PORT, () => {
+server.listen(80, () => {
     console.log("Server is up and running..." + PORT);
 });

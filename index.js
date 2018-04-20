@@ -46,6 +46,10 @@ db.close((err) => {
   });
 
 */
+server.get('/',(req,res)=>{
+    res.send(req);
+});
+
 server.get('/get-calorie', (req, res) => {
 
     // Get Food nutrients using Nutritionix.getFoodsNutrients API
@@ -55,7 +59,7 @@ server.get('/get-calorie', (req, res) => {
 
     rapid.call('Nutritionix', 'getFoodsNutrients', { 
 	    'applicationId': '4c64f5c3',
-	    'foodDescription': 'fried rice 1 cup',
+	    'foodDescription': req,
 	    'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
     
     }).on('success', (payload)=>{

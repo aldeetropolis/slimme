@@ -7,6 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const http = require('http');
 const API_KEY = require('./apiKey');
+const PORT = process.env.PORT || 5000
 
 // Create an express server
 const server = express();
@@ -80,6 +81,6 @@ server.get('/get-burncalorie', (req, res) => {
     });
 });
 
-server.listen(80, () => {
+server.listen(PORT, () => {
     console.log("Server is up and running..." + PORT);
 });

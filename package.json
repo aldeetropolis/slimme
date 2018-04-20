@@ -4,7 +4,7 @@
   "description": "create NodeJS based webhooks for API AI",
   "main": "index.js",
   "scripts": {
-    "test": "npm search"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

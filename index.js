@@ -51,7 +51,7 @@ db.close((err) => {
 }); 
 */ 
 server.get('/about',(req,res)=>{
-res.sendFile('about.html');	
+	res.sendFile(path.join(__dirname + '/about.html'));
 })
 	   
 const RapidAPI = require('rapidapi-connect');

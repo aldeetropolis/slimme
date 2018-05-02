@@ -66,7 +66,12 @@ server.post('/',(req,res)=>{
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b', 
             'applicationId': '4c64f5c3' 
         }).on('success', (payload)=>{ 
-            res.json(payload[0])  
+            rsp = {
+                "speech":"You just burn "+payload[0].exercises[0].nf_calories+" calories",
+                 "displayText":"You just burn "+payload[0].exercises[0].nf_calories+" calories",
+                 "source":"burn-calorie"
+            }
+            res.json(rsp)  
         }).on('error', (payload)=>{ 
             res.send(payload)  
         })

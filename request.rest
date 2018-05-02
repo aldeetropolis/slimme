@@ -42,7 +42,7 @@ content-type:application/json
 
 {
     "result":{
-        "resolvedQuery":"1 cup of rice",
+        "resolvedQuery":"15 minutes yoga",
         "action":"burn-calorie",
         "parameters":{
             "what":"15 minutes yoga"

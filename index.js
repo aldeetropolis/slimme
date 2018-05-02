@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const http = require('http'); 
 const API_KEY = require('./apiKey'); 
 const PORT = process.env.PORT || 5000 
+const path = require('path');
 
 // Create an express server 
 const server = express(); 

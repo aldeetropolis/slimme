@@ -1,0 +1,25 @@
+POST http://localhost:5000/
+content-type:application/json
+
+{
+    "result":{
+        "resolvedQuery":"1 cup of rice",
+        "action":"get-calorie",
+        "parameters":{
+            "what":"1 cup of rice"
+        }
+    }
+}
+
+POST http://localhost:5000/
+content-type:application/json
+
+{
+    "result":{
+        "resolvedQuery":"1 cup of rice",
+        "action":"burn-calorie",
+        "parameters":{
+            "what":"15 minutes yoga"
+        }
+    }
+}

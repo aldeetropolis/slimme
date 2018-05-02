@@ -62,7 +62,7 @@ server.post('/',(req,res)=>{
 
     if(req.body.result.action=='burn-calorie'){
         rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  
-            'exerciseDescription': req.body.result.parameters.what, 
+            'exerciseDescription': req.body.result.resolvedQuery, 
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b', 
             'applicationId': '4c64f5c3' 
         }).on('success', (payload)=>{ 

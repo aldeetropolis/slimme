@@ -70,6 +70,18 @@ server.post('/get-calorie',(req,res)=>{
 	});
  })
 
+server.get('/get-calorie',(req,res)=>{
+	console.log(req.body.what)
+	rapid.call('Nutritionix', 'getFoodsNutrients', { 
+	 'applicationId': '4c64f5c3',
+	 'foodDescription': req.body.what,
+	 'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
+	}).on('success', (payload)=>{ 
+	 res.send(payload[0]);  
+	}).on('error', (payload)=>{
+	 res.send(payload); 
+	});
+ })
 /*server.get('/get-burncalorie', (req, res) => { 
 
     // Get Calories burned estimation using Nutritionix.getCaloriesBurnedForExercises API 

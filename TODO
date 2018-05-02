@@ -1,0 +1,9 @@
+# Compose Response to webhook
+to produce:
+```js
+{
+    "speech":"compose from nutritionix response",
+    "displayText":"same as above",
+    "source":"action, i.e get-calorie or burn-calorie"
+}
+```

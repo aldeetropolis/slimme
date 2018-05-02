@@ -68,7 +68,7 @@ server.post('/',(req,res)=>{
         }).on('success', (payload)=>{ 
             rsp = {
                 "speech":"You just burn "+payload[0].exercises[0].nf_calories+" calories",
-                 "displayText":"You just burn "+payload[0].exercises[0].nf_calories+" k-calories",
+                 "displayText":"Yay! You just burn "+payload[0].exercises[0].nf_calories+" k-calories. Keep it up!",
                  "source":"burn-calorie"
             }
             res.json(rsp)  

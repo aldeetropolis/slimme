@@ -23,3 +23,29 @@ content-type:application/json
         }
     }
 }
+
+POST http://slim-me.herokuapp.com/
+content-type:application/json
+
+{
+    "result":{
+        "resolvedQuery":"1 cup of rice",
+        "action":"get-calorie",
+        "parameters":{
+            "what":"1 cup of rice"
+        }
+    }
+}
+
+POST http://slim-me.herokuapp.com/
+content-type:application/json
+
+{
+    "result":{
+        "resolvedQuery":"1 cup of rice",
+        "action":"burn-calorie",
+        "parameters":{
+            "what":"15 minutes yoga"
+        }
+    }
+}

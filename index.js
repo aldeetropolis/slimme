@@ -52,7 +52,7 @@ db.close((err) => {
 */ 
 server.get('/about',(req,res)=>{
 res.sendFile('about.html');	
-}
+})
 	   
 const RapidAPI = require('rapidapi-connect');
 const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd", "16a6f4ee-836d-43d3-85d2-370fbebc324c");

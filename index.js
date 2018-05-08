@@ -51,10 +51,15 @@ server.post('/',(req,res)=>{
     if(req.body.result.action=='get-calorie'){
         rapid.call('Nutritionix', 'getFoodsNutrients', { 
             'applicationId': '4c64f5c3',
-            'foodDescription': req.body.result.parameters.what,
+            'foodDescription': req.body.result.resolvedQuery,
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
         }).on('success', (payload)=>{ 
-            res.json(payload[0]);  
+	    rsp = {
+                "speech":"You eat "+payload[0].foods[0].nf_calories+" k-calories.",
+                 "displayText":"You eat "+payload[0].foods[0].nf_calories+" k-calories.",
+                 "source":"get-calorie"
+            }
+            res.json(rsp)  	
         }).on('error', (payload)=>{
             res.send(payload); 
         });

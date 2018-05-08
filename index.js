@@ -55,8 +55,8 @@ server.post('/',(req,res)=>{
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
         }).on('success', (payload)=>{ 
 	    rsp = {
-                "speech":"You eat "+payload[0].foods[0].nf_calories+" k-calories.",
-                 "displayText":"You eat "+payload[0].foods[0].nf_calories+" k-calories.",
+                "speech":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
+                 "displayText":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
                  "source":"get-calorie"
             }
             res.json(rsp)  	

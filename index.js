@@ -23,6 +23,14 @@ server.get('/about',(req,res)=>{
 	res.sendFile(path.join(__dirname + '/about.html'));
 })
 
+server.get('/user-profile',(req,res)=>{
+	res.sendFile(path.join(__dirname + '/user-profile.html'));
+})
+
+server.get('/track-calorie',(req,res)=>{
+	res.sendFile(path.join(__dirname + '/track-calorie.html'));
+})
+
 server.get('/get-calorie',(req,res)=>{
 	rapid.call('Nutritionix', 'getFoodsNutrients', { 
 	 'applicationId': '4c64f5c3',

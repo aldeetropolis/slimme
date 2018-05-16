@@ -89,6 +89,44 @@ server.post('/',(req,res)=>{
             res.send(payload)  
         })
     }         
+    if(req.body.result.action=='bot.features'){ 
+            rsp = {
+                "speech":{
+          type: 'template',
+          altText: 'Buttons alt text',
+          template: {
+            type: 'buttons',
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'My button sample',
+            text: 'Hello, my button',
+            actions: [
+              { label: 'Go to line.me', type: 'uri', uri: 'https://line.me' },
+              { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
+              { label: '言 hello2', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
+              { label: 'Say message', type: 'message', text: 'Rice=米' },
+            ],
+          },
+        },
+                 "displayText":{
+          type: 'template',
+          altText: 'Buttons alt text',
+          template: {
+            type: 'buttons',
+            thumbnailImageUrl: buttonsImageURL,
+            title: 'My button sample',
+            text: 'Hello, my button',
+            actions: [
+              { label: 'Go to line.me', type: 'uri', uri: 'https://line.me' },
+              { label: 'Say hello1', type: 'postback', data: 'hello こんにちは' },
+              { label: '言 hello2', type: 'postback', data: 'hello こんにちは', text: 'hello こんにちは' },
+              { label: 'Say message', type: 'message', text: 'Rice=米' },
+            ],
+          },
+        },
+                 "source":"bot.features"
+            }
+            res.json(rsp)  
+    }  
 })
 
 server.listen(PORT, () => { 

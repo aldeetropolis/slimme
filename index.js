@@ -56,6 +56,16 @@ server.get('/get-burncalorie',(req,res)=>{
 })
 
 server.post('/',(req,res)=>{
+    if(req.body.result.action=='get-goal'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-goal"
+            }
+            res.json(rsp)  	
+        
+    } 
+	
     if(req.body.result.action=='get-calorie'){
         rapid.call('Nutritionix', 'getFoodsNutrients', { 
             'applicationId': '4c64f5c3',

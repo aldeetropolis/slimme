@@ -65,6 +65,46 @@ server.post('/',(req,res)=>{
             res.json(rsp)  	
         
     } 
+
+    if(req.body.result.action=='get-weight'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-weight"
+            }
+            res.json(rsp)  	
+        
+    } 	
+
+    if(req.body.result.action=='get-gender'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-gender"
+            }
+            res.json(rsp)  	
+        
+    } 	
+
+    if(req.body.result.action=='get-height'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-height"
+            }
+            res.json(rsp)  	
+        
+    } 	
+
+    if(req.body.result.action=='get-weightgoal'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-weightgoal"
+            }
+            res.json(rsp)  	
+        
+    } 	
 	
     if(req.body.result.action=='get-calorie'){
         rapid.call('Nutritionix', 'getFoodsNutrients', { 

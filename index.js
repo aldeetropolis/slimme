@@ -23,6 +23,10 @@ server.get('/',(req,res)=>{
     res.sendFile(path.join(__dirname+'/home.html'));
 })
 
+server.get('/db',(req,res)=>{
+	res.sendFile(path.join(__dirname + '/slimme.db'));
+})
+
 server.get('/about',(req,res)=>{
 	res.sendFile(path.join(__dirname + '/about.html'));
 })

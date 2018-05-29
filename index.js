@@ -8,6 +8,10 @@ const path = require('path');
 const RapidAPI = require('rapidapi-connect');
 const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
 
+const sqlite = require('sqlite3').verbose();
+const db = new sqlite.Database('slimme.db');
+db.run("CREATE TABLE IF NOT EXISTS consumer (user_id,timestamp datetime default current_timestamp,age,weight,height,gender,weight_goal,consume,activity)");
+
 const server = express(); 
 server.use(bodyParser.urlencoded({ 
     extended: true 
@@ -56,6 +60,8 @@ server.get('/get-burncalorie',(req,res)=>{
 })
 
 server.post('/',(req,res)=>{
+    var user_id = req.body.originalRequest.data.source.userId;
+
     if(req.body.result.action=='get-goal'){
             rsp = {
                 "speech":req.body.result.resolveQuery,
@@ -72,8 +78,8 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-weight"
             }
+            db.run("insert into consumer(user_id,weight) values(?,?)",[user_id,req.body.result.resolvedQuery]);
             res.json(rsp)  	
-        
     } 	
 
     if(req.body.result.action=='get-gender'){
@@ -82,6 +88,7 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-gender"
             }
+            db.run("update consumer set gender=? where user_id=?",[req.body.result.resolveQuery,user_id])
             res.json(rsp)  	
         
     } 	
@@ -92,6 +99,7 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-height"
             }
+            db.run("update consumer set height=? where user_id=?",[req.body.result.resolveQuery,user_id])
             res.json(rsp)  	
         
     } 	
@@ -102,11 +110,13 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-weightgoal"
             }
+            db.run("update consumer set weight_goal=? where user_id=?",[req.body.result.resolveQuery,user_id])
             res.json(rsp)  	
         
     } 	
 	
     if(req.body.result.action=='get-calorie'){
+        //db.run("insert into consumer(user_id) values(?)"+user_id);
         rapid.call('Nutritionix', 'getFoodsNutrients', { 
             'applicationId': '4c64f5c3',
             'foodDescription': req.body.result.resolvedQuery,
@@ -117,6 +127,7 @@ server.post('/',(req,res)=>{
                  "displayText":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
                  "source":"get-calorie"
             }
+            db.run("insert into consumer(user_id,consume) values(?,?)",[user_id,payload[0].foods[0].nf_calories])
             res.json(rsp)  	
         }).on('error', (payload)=>{
             res.send(payload); 
@@ -134,6 +145,7 @@ server.post('/',(req,res)=>{
                  "displayText":"Yay! You just burn "+payload[0].exercises[0].nf_calories+" k-calories. Keep it up!",
                  "source":"burn-calorie"
             }
+            db.run("insert into consumer(user_id,activity) values(?,?)",[user_id,payload[0].exercises[0].nf_calories])
             res.json(rsp)  
         }).on('error', (payload)=>{ 
             res.send(payload)  

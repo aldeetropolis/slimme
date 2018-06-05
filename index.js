@@ -16,7 +16,45 @@ const server = express();
 server.use(bodyParser.urlencoded({ 
     extended: true 
 })); 
+function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
+    const properWeight = Math.round(height * height * 0.0022);
+    console.log(properWeight);
 
+    let bmr;
+    if (gender == 'female'){
+	bmr = Math.round(655.1 + (9.563 * weight) + (1.85 * height) - (4.676 * age));
+    } else if (gender == 'male'){
+	bmr = Math.round(66.5 + (13.75 * weight) + (5.003 * height) - (6.755 * age));
+    }
+    console.log(bmr);
+    let activityFactor;
+    // Activity Factor
+    if (activity== 'a'){
+	activityFactor = 1.2;
+    } else if (activity== 'b'){
+	activityFactor = 1.375;
+    } else if (activity== 'c'){
+	activityFactor = 1.55;
+    } else if (activity== 'd'){
+	activityFactor = 1.725;
+    } else if (activity== 'e'){
+	activityFactor = 1.9;
+    }
+    console.log(activityFactor);
+
+    let weightgoalFactor;
+    // Weight Goal
+    if (weightgoal == 'Stay the same weight'){
+    weightgoalFactor = 0;
+    } else if (weightgoal == 'Lose 0.25 kg per week'){
+	weightgoalFactor = 250;
+    } else if (weightgoal == 'Lose 0.5 kg per week') {
+	weightgoalFactor = 500;
+    }
+    console.log(weightgoalFactor);
+    const requiredCalorie = Math.round((bmr * activityFactor) - weightgoalFactor);
+    return requiredCalorie;
+}
 server.use(bodyParser.json()); 
 
 server.get('/',(req,res)=>{
@@ -45,54 +83,13 @@ server.get('/track-calorie',(req,res)=>{
 })
 
 server.get('/getreq',(req,res)=>{
-	res.sendFile(path.join(__dirname + '/track-calorie.html'));
-	    function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
-		    const properWeight = Math.round(height * height * 0.0022);
-		    console.log(properWeight);
-
-		    let bmr;
-		    if (gender == 'female'){
-			bmr = Math.round(655.1 + (9.563 * weight) + (1.85 * height) - (4.676 * age));
-		    } else if (gender == 'male'){
-			bmr = Math.round(66.5 + (13.75 * weight) + (5.003 * height) - (6.755 * age));
-		    }
-		    console.log(bmr);
-		    let activityFactor;
-		    // Activity Factor
-		    if (activity== 'a'){
-			activityFactor = 1.2;
-		    } else if (activity== 'b'){
-			activityFactor = 1.375;
-		    } else if (activity== 'c'){
-			activityFactor = 1.55;
-		    } else if (activity== 'd'){
-			activityFactor = 1.725;
-		    } else if (activity== 'e'){
-			activityFactor = 1.9;
-		    }
-		    console.log(activityFactor);
-
-		    let weightgoalFactor;
-		    // Weight Goal
-		    if (weightgoal == 'Stay the same weight'){
-		    weightgoalFactor = 0;
-		    } else if (weightgoal == 'Lose 0.25 kg per week'){
-			weightgoalFactor = 250;
-		    } else if (weightgoal == 'Lose 0.5 kg per week') {
-			weightgoalFactor = 500;
-		    }
-		    console.log(weightgoalFactor);
-		    const requiredCalorie = Math.round((bmr * activityFactor) - weightgoalFactor);
-		    return requiredCalorie;
-		}
-	    row={}
-            db.run("update consumer set weightgoal=? where user_id=?",[req.body.result.resolvedQuery,user_id])
-	    db.get("select * from consumer where user_id=?",[user_id], function (err,rows) { 
-		    if (err) {
-			    return console.error(err.message);
-		    }		    
-		    return rows?gk=getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal):gk=100
-	    });	
+	user_id=req.query.user_id
+	db.get("select * from consumer where user_id=?",[user_id], function (err,row) { 
+	if (err) {
+	    return console.error(err.message);
+	}		    
+	return getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)
+	});	
 })
 
 server.get('/get-calorie',(req,res)=>{

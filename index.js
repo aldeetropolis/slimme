@@ -88,7 +88,7 @@ server.get('/getreq',(req,res)=>{
 	if (err) {
 	    return console.error(err.message);
 	}		    
-	return getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)
+	res.json(getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal))
 	});	
 })
 

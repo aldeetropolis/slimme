@@ -181,13 +181,29 @@ server.post('/',(req,res)=>{
 			    return console.error(err.message);
 		    }		    
 		    rsp = {
-			    "speech":"You need to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" a day",
-			    "displayText":"You need to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" a day",
+			    "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day. Do you want to start your diet today?(Y/N)",
+			    "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day, Do you want to start your diet today?(Y/N)",
 			    "source":"get-weightgoal"
 		    }
 		    res.json(rsp) 
 	    });		    	     	        
     }
+
+    if(req.body.result.action=='daily-calorie'){
+	    row={}
+            //db.run("update consumer set weightgoal=? where user_id=?",[req.body.result.resolvedQuery,user_id])
+	    db.get("select * from consumer where user_id=?",[user_id], function (err,row) { 
+		    if (err) {
+			    return console.error(err.message);
+		    }		    
+		    rsp = {
+			    "speech":"Your daily calorie need is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+			    "displayText":"Your daily calorie need is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+			    "source":"daily-calorie"
+		    }
+		    res.json(rsp) 
+	    });		    	     	        
+    }	
 	
     if(req.body.result.action=='get-calorie'){
         //db.run("insert into consumer(user_id) values(?)"+user_id);

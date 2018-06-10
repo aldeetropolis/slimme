@@ -181,8 +181,8 @@ server.post('/',(req,res)=>{
 			    return console.error(err.message);
 		    }		    
 		    rsp = {
-			    "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day. Do you want to start your diet today?(Y/N)",
-			    "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day, Do you want to start your diet today?(Y/N)",
+			    "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+			    "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
 			    "source":"get-weightgoal"
 		    }
 		    res.json(rsp) 
@@ -197,8 +197,8 @@ server.post('/',(req,res)=>{
 			    return console.error(err.message);
 		    }		    
 		    rsp = {
-			    "speech":"Your daily calorie need is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
-			    "displayText":"Your daily calorie need is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+			    "speech":"Your daily calorie needs is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+			    "displayText":"Your daily calorie needs is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
 			    "source":"daily-calorie"
 		    }
 		    res.json(rsp) 

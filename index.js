@@ -21,7 +21,7 @@ const db = new Client({
 
 db.connect();
 
-db.query('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);', (err, res) => {
+db.query('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);', (err, res) => {
   if (err) throw err;
   for (let row of res.rows) {
     console.log(JSON.stringify(row));

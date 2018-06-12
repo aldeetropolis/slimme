@@ -33,6 +33,7 @@ const server = express();
 server.use(bodyParser.urlencoded({ 
     extended: true 
 })); 
+
 function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
     const properWeight = Math.round(height * height * 0.0022);
     console.log(properWeight);
@@ -80,11 +81,14 @@ server.get('/',(req,res)=>{
 
 server.get('/db',(req,res)=>{
     txt=[]
-    db.each("SELECT * FROM consumer", function(err, row){
-        txt.push(row)
-    },function(){
-        res.send(txt)
-    })
+    db.query("SELECT * FROM consumer", (err, row)=>{
+	if (err) throw err;
+	for (let row of row.rows) {
+	    txt.push(JSON.stringify(row));
+	}
+	db.end();
+    });
+    res.send(txt)
 })
 
 server.get('/about',(req,res)=>{

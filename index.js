@@ -81,6 +81,8 @@ server.get('/',(req,res)=>{
 
 server.get('/db',(req,res)=>{
     txt=[]
+    db.query("insert into consumer(user_id,age,weight,height,gender) values('solie','30','69','169','male')");
+    db.end();
     db.query("SELECT * FROM consumer", (err, row)=>{
 	if (err) throw err;
 	for (let row of row.rows) {

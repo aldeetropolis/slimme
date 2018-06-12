@@ -9,8 +9,25 @@ const RapidAPI = require('rapidapi-connect');
 const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
 
 const sqlite = require('sqlite3').verbose();
-const db = new sqlite.Database('slimme.db');
-db.run("CREATE TABLE IF NOT EXISTS consumer (user_id,timestamp datetime default current_timestamp,age,weight,height,gender,weightgoal,consume,activity,exercise)");
+//const db = new sqlite.Database('slimme.db');
+//db.run("CREATE TABLE IF NOT EXISTS consumer (user_id,timestamp datetime default current_timestamp,age,weight,height,gender,weightgoal,consume,activity,exercise)");
+
+const { Client } = require('pg');
+
+const db = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+db.connect();
+
+db.query('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);', (err, res) => {
+  if (err) throw err;
+  for (let row of res.rows) {
+    console.log(JSON.stringify(row));
+  }
+  db.end();
+});
 
 const server = express(); 
 server.use(bodyParser.urlencoded({ 

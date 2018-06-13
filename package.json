@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/annisaristya/slimme#readme",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "express": "^4.16.3",
     "pg-promise": "^8.4.4",
     "rapidapi-connect": "0.0.6"

@@ -21,8 +21,7 @@
   "homepage": "https://github.com/annisaristya/slimme#readme",
   "dependencies": {
     "express": "^4.16.3",
-    "pg": "7.4.3",
-    "rapidapi-connect": "0.0.6",
-    "sqlite3": "^4.0.0"
+    "pg-promise": "^8.4.4",
+    "rapidapi-connect": "0.0.6"
   }
 }

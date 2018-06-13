@@ -232,7 +232,7 @@ server.post('/',(req,res)=>{
     }
 
     if(req.body.result.action=='daily-calorie'){
-        db.any("select * from consumer where user_id=$1",[user_id])
+        db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0",[user_id])
         .then(row=>{
             rsp = {
 			    "speech":"Your daily calorie needs is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",

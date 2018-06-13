@@ -129,9 +129,22 @@ server.get('/getreq',(req,res)=>{
 
 server.get('/getdaily',(req,res)=>{
 	user_id=req.query.user_id
-    db.any("select * from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
-    .then(data=>res.json(data))
-    .catch(error=>res.json(error))
+    req=0;
+    db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0",[user_id])
+    .then(data=>{
+        req=getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])
+    })
+    .catch(err=>console.log(err))  	        
+    db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
+    .then(data=>{
+        rem = req+data[0]['cons']-data[0]['exc']
+        res.json({
+            "speech":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+            "displayText":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+            "source":"daily-calorie"
+        })
+    })
+    .catch(err=>console.log(err))
 })
 
 server.get('/get-calorie',(req,res)=>{

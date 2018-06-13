@@ -232,7 +232,6 @@ server.post('/',(req,res)=>{
         .then(res=>console.log(res))
         .catch(err=>console.log(err))
         res.json(rsp)  	
-        
     } 	
 
     if(req.body.result.action=='get-weightgoal'){
@@ -262,8 +261,8 @@ server.post('/',(req,res)=>{
         .then(data=>{
             rem = parseFloat(req)+parseFloat(data[0]['cons'])-parseFloat(data[0]['exc'])
             rsp = {
-                "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem,
-                "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem,
+                "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem+" kCal.",
+                "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem+" kCal.",
                 "source":"daily-calorie"
             }
         })

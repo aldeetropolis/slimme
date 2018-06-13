@@ -4,30 +4,20 @@ const http = require('http');
 const API_KEY = require('./apiKey'); 
 const PORT = process.env.PORT || 5000 
 const path = require('path');
-
 const RapidAPI = require('rapidapi-connect');
 const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
 
-const sqlite = require('sqlite3').verbose();
-//const db = new sqlite.Database('slimme.db');
-//db.run("CREATE TABLE IF NOT EXISTS consumer (user_id,timestamp datetime default current_timestamp,age,weight,height,gender,weightgoal,consume,activity,exercise)");
-
-const { Client } = require('pg');
-
-const db = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
-});
-
-db.connect();
-
-db.query('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  db.end();
-});
+const promise = require('bluebird'); 
+const initOptions = {
+    promiseLib: promise // overriding the default (ES6 Promise);
+};
+const pgp = require('pg-promise')(initOptions);
+pgp.pg.defaults.ssl = true;
+const db = pgp(process.env.DATABASE_URL);
+db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
+.then(data=>console.log(data))
+.catch(error=>console.log(error))
+.finally(db.$pool.end);
 
 const server = express(); 
 server.use(bodyParser.urlencoded({ 
@@ -81,16 +71,14 @@ server.get('/',(req,res)=>{
 
 server.get('/db',(req,res)=>{
     txt=[]
-    db.query("insert into consumer(user_id,age,weight,height,gender) values('solie','30','69','169','male')");
-    db.end();
-    db.query("SELECT * FROM consumer", (err, row)=>{
-	if (err) throw err;
-	for (let row of row.rows) {
-	    txt.push(JSON.stringify(row));
-	}
-	db.end();
-    });
-    res.send(txt)
+    db.any('select * from consumer')
+    .then(data => {
+        res.json(data);
+    })
+    .catch(error => {
+        res.send(error)
+    })
+    .finally(db.$pool.end);
 })
 
 server.get('/about',(req,res)=>{

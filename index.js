@@ -127,6 +127,13 @@ server.get('/getreq',(req,res)=>{
     .catch(error=>res.json(error))
 })
 
+server.get('/getdaily',(req,res)=>{
+	user_id=req.query.user_id
+    db.any("select * from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
+    .then(data=>res.json(data)
+    .catch(error=>res.json(error))
+})
+
 server.get('/get-calorie',(req,res)=>{
 	rapid.call('Nutritionix', 'getFoodsNutrients', { 
 	 'applicationId': '4c64f5c3',

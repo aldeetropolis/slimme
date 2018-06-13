@@ -130,7 +130,7 @@ server.get('/getreq',(req,res)=>{
 server.get('/getdaily',(req,res)=>{
 	user_id=req.query.user_id
     db.any("select * from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
-    .then(data=>res.json(data)
+    .then(data=>res.json(data))
     .catch(error=>res.json(error))
 })
 

@@ -4,19 +4,36 @@ const http = require('http');
 const API_KEY = require('./apiKey'); 
 const PORT = process.env.PORT || 5000 
 const path = require('path');
-const RapidAPI = require('rapidapi-connect');
-const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
-
 const promise = require('bluebird'); 
 const initOptions = {
     promiseLib: promise // overriding the default (ES6 Promise);
 };
+const RapidAPI = require('rapidapi-connect');
+const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
 const pgp = require('pg-promise')(initOptions);
 pgp.pg.defaults.ssl = true;
 const db = pgp(process.env.DATABASE_URL);
+//const sqlite = require('sqlite3').verbose();
+//const db = new sqlite.Database('slimme.db');
+//db.run("CREATE TABLE IF NOT EXISTS consumer (user_id,timestamp datetime default current_timestamp,age,weight,height,gender,weightgoal,consume,activity,exercise)");
+
+// const { Client } = require('pg');
+
+// const db = new Client({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: true,
+// });
+
+// db.connect();
 db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
 .then(data=>console.log(data))
 .catch(error=>console.log(error))
+//   if (err) throw err;
+//   for (let row of res.rows) {
+//     console.log(JSON.stringify(row));
+//   }
+//   db.end();
+// });
 
 const server = express(); 
 server.use(bodyParser.urlencoded({ 
@@ -25,7 +42,7 @@ server.use(bodyParser.urlencoded({
 
 function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
     const properWeight = Math.round(height * height * 0.0022);
-    console.log(properWeight);
+    console.log('proper: '+properWeight);
 
     let bmr;
     if (gender == 'female'){
@@ -33,7 +50,7 @@ function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
     } else if (gender == 'male'){
 	bmr = Math.round(66.5 + (13.75 * weight) + (5.003 * height) - (6.755 * age));
     }
-    console.log(bmr);
+    console.log('bmr: '+bmr);
     let activityFactor;
     // Activity Factor
     if (activity== 'a'){
@@ -47,7 +64,7 @@ function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
     } else if (activity== 'e'){
 	activityFactor = 1.9;
     }
-    console.log(activityFactor);
+    console.log('activ: '+activityFactor);
 
     let weightgoalFactor;
     // Weight Goal
@@ -58,8 +75,9 @@ function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
     } else if (weightgoal == 'Lose 0.5 kg per week') {
 	weightgoalFactor = 500;
     }
-    console.log(weightgoalFactor);
+    console.log('weightgoal: '+weightgoalFactor);
     const requiredCalorie = Math.round((bmr * activityFactor) - weightgoalFactor);
+    console.log('req calorie: '+requiredCalorie)
     return requiredCalorie;
 }
 server.use(bodyParser.json()); 
@@ -71,6 +89,17 @@ server.get('/',(req,res)=>{
 server.get('/db',(req,res)=>{
     txt=[]
     db.any('select * from consumer')
+    .then(data => {
+        res.json(data);
+    })
+    .catch(error => {
+        res.send(error)
+    })
+})
+
+server.get('/insert',(req,res)=>{
+    txt=[]
+    db.any("insert into consumer(user_id,timestamp,age,gender,weight,height,weightgoal,activity) values('test',now(),'44','female','64','164','Stay the same weight','a')")
     .then(data => {
         res.json(data);
     })
@@ -93,12 +122,9 @@ server.get('/track-calorie',(req,res)=>{
 
 server.get('/getreq',(req,res)=>{
 	user_id=req.query.user_id
-	db.get("select * from consumer where user_id=?",[user_id], function (err,row) { 
-	if (err) {
-	    return console.error(err.message);
-	}		    
-	res.json(getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal))
-	});	
+    db.any("select * from consumer where user_id=$1 order by timestamp desc limit 1",[user_id])
+    .then(data=>res.json(getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])))
+    .catch(error=>res.json(error))
 })
 
 server.get('/get-calorie',(req,res)=>{
@@ -134,7 +160,9 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-weight"
             }
-            db.run("insert into consumer(user_id,weight) values(?,?)",[user_id,req.body.result.resolvedQuery.split(' ')[0]]);
+            db.any("insert into consumer(user_id,timestamp,weight) values($1,now(),$2)",[user_id,req.body.result.resolvedQuery.split(' ')[0]])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
             res.json(rsp)  	
     } 	
 
@@ -144,9 +172,10 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-gender"
             }
-            db.run("update consumer set gender=? where user_id=?",[req.body.result.resolvedQuery.toLowerCase(),user_id])
+            db.any("update consumer set gender=$1 where user_id=$2",[req.body.result.resolvedQuery.toLowerCase(),user_id])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
             res.json(rsp)  	
-        
     } 	
 
     if(req.body.result.action=='get-height'){
@@ -155,9 +184,10 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-height"
             }
-            db.run("update consumer set height=? where user_id=?",[req.body.result.resolvedQuery.split(' ')[0],user_id])
+            db.any("update consumer set height=$1 where user_id=$2",[req.body.result.resolvedQuery.split(' ')[0],user_id])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
             res.json(rsp)  	
-        
     } 	
     
     if(req.body.result.action=='get-age'){
@@ -166,9 +196,10 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-age"
             }
-            db.run("update consumer set age=? where user_id=?",[req.body.result.resolvedQuery.split(' ')[0],user_id])
-            res.json(rsp)  	
-        
+            db.any("update consumer set age=$1 where user_id=$2",[req.body.result.resolvedQuery.split(' ')[0],user_id])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
+            res.json(rsp)  	        
     } 
 	
     if(req.body.result.action=='get-activity'){
@@ -177,41 +208,40 @@ server.post('/',(req,res)=>{
                  "displayText":req.body.result.resolveQuery,
                  "source":"get-activity"
             }
-	    db.run("update consumer set activity=? where user_id=?",[req.body.result.resolvedQuery.toLowerCase(),user_id])
-            res.json(rsp)  	
+        db.any("update consumer set activity=$1 where user_id=$2",[req.body.result.resolvedQuery.toLowerCase(),user_id])
+        .then(res=>console.log(res))
+        .catch(err=>console.log(err))
+        res.json(rsp)  	
         
     } 	
 
     if(req.body.result.action=='get-weightgoal'){
-	    row={}
-            db.run("update consumer set weightgoal=? where user_id=?",[req.body.result.resolvedQuery,user_id])
-	    db.get("select * from consumer where user_id=?",[user_id], function (err,row) { 
-		    if (err) {
-			    return console.error(err.message);
-		    }		    
-		    rsp = {
-			    "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
-			    "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
-			    "source":"get-weightgoal"
-		    }
-		    res.json(rsp) 
-	    });		    	     	        
+        db.any("update consumer set weightgoal=$1 where user_id=$2",[req.body.result.resolvedQuery,user_id])
+        .then(res=>console.log(res))
+        .catch(err=>console.log(err))
+        db.any("select * from consumer where user_id=$1 order by timestamp desc limit 1",[user_id])
+        .then(row=>{
+            rsp = {
+                "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+                "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+                "source":"get-weightgoal"
+            };
+            res.json(rsp)
+        })
+        .catch(err=>console.log(err))        
     }
 
     if(req.body.result.action=='daily-calorie'){
-	    row={}
-            //db.run("update consumer set weightgoal=? where user_id=?",[req.body.result.resolvedQuery,user_id])
-	    db.get("select * from consumer where user_id=?",[user_id], function (err,row) { 
-		    if (err) {
-			    return console.error(err.message);
-		    }		    
-		    rsp = {
+        db.any("select * from consumer where user_id=$1",[user_id])
+        .then(row=>{
+            rsp = {
 			    "speech":"Your daily calorie needs is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
 			    "displayText":"Your daily calorie needs is "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
 			    "source":"daily-calorie"
 		    }
 		    res.json(rsp) 
-	    });		    	     	        
+        })
+        .catch(err=>console.log(err))  	        
     }	
 	
     if(req.body.result.action=='get-calorie'){
@@ -221,12 +251,14 @@ server.post('/',(req,res)=>{
             'foodDescription': req.body.result.resolvedQuery,
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
         }).on('success', (payload)=>{ 
-	    rsp = {
+            rsp = {
                 "speech":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
-                 "displayText":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
-                 "source":"get-calorie"
+                "displayText":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
+                "source":"get-calorie"
             }
-            db.run("insert into consumer(user_id,consume) values(?,?)",[user_id,payload[0].foods[0].nf_calories])
+            db.any("insert into consumer(user_id,timestamp,consume) values($1,now(),$2)",[user_id,payload[0].foods[0].nf_calories])
+            .then(row=>console.log(row))
+            .catch(err=>console.log(err))
             res.json(rsp)  	
         }).on('error', (payload)=>{
             res.send(payload); 
@@ -241,10 +273,12 @@ server.post('/',(req,res)=>{
         }).on('success', (payload)=>{ 
             rsp = {
                 "speech":"Yay! You just burn "+payload[0].exercises[0].nf_calories+" k-calories. Keep it up!",
-                 "displayText":"Yay! You just burn "+payload[0].exercises[0].nf_calories+" k-calories. Keep it up!",
-                 "source":"burn-calorie"
+                "displayText":"Yay! You just burn "+payload[0].exercises[0].nf_calories+" k-calories. Keep it up!",
+                "source":"burn-calorie"
             }
-            db.run("insert into consumer(user_id,exercise) values(?,?)",[user_id,payload[0].exercises[0].nf_calories])
+            db.any("insert into consumer(user_id,timestamp,exercise) values($1,now(),$2)",[user_id,payload[0].exercises[0].nf_calories])
+            .then(row=>console.log(row))
+            .catch(err=>console.log(err))
             res.json(rsp)  
         }).on('error', (payload)=>{ 
             res.send(payload)  

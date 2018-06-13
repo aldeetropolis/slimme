@@ -17,7 +17,6 @@ const db = pgp(process.env.DATABASE_URL);
 db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
 .then(data=>console.log(data))
 .catch(error=>console.log(error))
-.finally(db.$pool.end);
 
 const server = express(); 
 server.use(bodyParser.urlencoded({ 
@@ -78,7 +77,6 @@ server.get('/db',(req,res)=>{
     .catch(error => {
         res.send(error)
     })
-    .finally(db.$pool.end);
 })
 
 server.get('/about',(req,res)=>{

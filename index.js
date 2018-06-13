@@ -260,14 +260,15 @@ server.post('/',(req,res)=>{
         .catch(err=>console.log(err))  	        
         db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
         .then(data=>{
-            rem = req+data[0]['cons']-data[0]['exc']
-            res.json({
-                "speech":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
-                "displayText":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+            rem = req+data[0]['cons']-data[0]['exc'];
+            rsp = {
+                "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+                "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
                 "source":"daily-calorie"
-            })
+            }
         })
         .catch(err=>console.log(err))
+        res.json(rsp)
     }	
 	
     if(req.body.result.action=='get-calorie'){

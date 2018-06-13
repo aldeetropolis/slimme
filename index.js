@@ -220,10 +220,10 @@ server.post('/',(req,res)=>{
         .then(res=>console.log(res))
         .catch(err=>console.log(err))
         db.any("select * from consumer where user_id=$1 order by timestamp desc limit 1",[user_id])
-        .then(row=>{
+        .then(data=>{
             rsp = {
-                "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
-                "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(row.weight,row.gender,row.height,row.age,row.activity,row.weightgoal)+" kcal a day",
+                "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])+" kcal a day",
+                "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])+" kcal a day",
                 "source":"get-weightgoal"
             };
             res.json(rsp)

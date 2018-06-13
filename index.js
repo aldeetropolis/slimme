@@ -122,7 +122,7 @@ server.get('/track-calorie',(req,res)=>{
 
 server.get('/getreq',(req,res)=>{
 	user_id=req.query.user_id
-    db.any("select * from consumer where user_id=$1 order by timestamp desc limit 1",[user_id])
+    db.any("select * from consumer where user_id=$1 and weught>0 and height>0 and age>0 limit 1",[user_id])
     .then(data=>res.json(getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])))
     .catch(error=>res.json(error))
 })
@@ -262,8 +262,8 @@ server.post('/',(req,res)=>{
         .then(data=>{
             rem = req+data[0]['cons']-data[0]['exc'];
             rsp = {
-                "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
-                "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+                "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem,
+                "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem,
                 "source":"daily-calorie"
             }
         })

@@ -259,7 +259,7 @@ server.post('/',(req,res)=>{
         .catch(err=>console.log(err))  	        
         db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
         .then(data=>{
-            rem = parseFloat(req)+parseFloat(data[0]['cons'])-parseFloat(data[0]['exc'])
+            rem = parseFloat(req)-parseFloat(data[0]['cons'])+parseFloat(data[0]['exc'])
             rsp = {
                 "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem+" kCal.",
                 "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem+" kCal.",

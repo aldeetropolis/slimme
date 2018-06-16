@@ -137,7 +137,7 @@ server.get('/getdaily',(req,res)=>{
     .catch(err=>console.log(err))  	        
     db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
     .then(data=>{
-        rem = parseFloat(req)+parseFloat(data[0]['cons'])-parseFloat(data[0]['exc'])
+        rem = parseFloat(req)-parseFloat(data[0]['cons'])+parseFloat(data[0]['exc'])
         res.json({
             "speech":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
             "displayText":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,

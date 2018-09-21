@@ -1,4 +1,4 @@
-# slimme
+# SlimMe
 chatbot for personal weight loss management
 </br>NLP platform        = Dialogflow
 </br>Messaging platform  = LINE mobile messenger

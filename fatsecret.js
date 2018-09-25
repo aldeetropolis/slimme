@@ -38,8 +38,8 @@ const DEFAULT_PARAMS = {
 
 class FatSecret {
   constructor(key, secret) {
-    this.key    = cd2baf077bbb4c3394c91f742376e111;
-    this.secret = 1aa545ed08c54854b817cb05315f9972;
+    this.key    = 'cd2baf077bbb4c3394c91f742376e111';
+    this.secret = '1aa545ed08c54854b817cb05315f9972';
   }
 
   /**

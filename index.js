@@ -62,9 +62,129 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
 });
 */
 
+// db.connect();
+db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
+.then(data=>console.log(data))
+.catch(error=>console.log(error))
+
+const server = express(); 
+server.use(bodyParser.urlencoded({ 
+    extended: true 
+})); 
+
+function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
+    const properWeight = Math.round(height * height * 0.0022);
+    console.log('proper: '+properWeight);
+    
+  // BMR
+    let bmr;
+    if (gender == 'female'){
+	bmr = Math.round(655.1 + (9.563 * weight) + (1.85 * height) - (4.676 * age));
+    } else if (gender == 'male'){
+	bmr = Math.round(66.5 + (13.75 * weight) + (5.003 * height) - (6.755 * age));
+    }
+    console.log('bmr: '+bmr);
+    
+    // Activity Factor
+    let activityFactor;
+    if (activity== 'a'){
+	activityFactor = 1.2;
+    } else if (activity== 'b'){
+	activityFactor = 1.375;
+    } else if (activity== 'c'){
+	activityFactor = 1.55;
+    } else if (activity== 'd'){
+	activityFactor = 1.725;
+    } else if (activity== 'e'){
+	activityFactor = 1.9;
+    }
+    console.log('activ: '+activityFactor);
+
+    let weightgoalFactor;
+    // Weight Goal
+    if (weightgoal == 'Stay the same weight'){
+    weightgoalFactor = 0;
+    } else if (weightgoal == 'Lose 0.25 kg per week'){
+	weightgoalFactor = 250;
+    } else if (weightgoal == 'Lose 0.5 kg per week') {
+	weightgoalFactor = 500;
+    }
+    console.log('weightgoal: '+weightgoalFactor);
+    const requiredCalorie = Math.round((bmr * activityFactor) - weightgoalFactor);
+    console.log('req calorie: '+requiredCalorie)
+    return requiredCalorie;
+}
+server.use(bodyParser.json()); 
+
+server.get('/',(req,res)=>{
+    res.sendFile(path.join(__dirname+'/home.html'));
+})
+
+server.get('/db',(req,res)=>{
+    txt=[]
+    db.any('select * from consumer')
+    .then(data => {
+        res.json(data);
+    })
+    .catch(error => {
+        res.send(error)
+    })
+})
+
+server.get('/insert',(req,res)=>{
+    txt=[]
+    db.any("insert into consumer(user_id,timestamp,age,gender,weight,height,weightgoal,activity) values('test',now(),'44','female','64','164','Stay the same weight','a')")
+    .then(data => {
+        res.json(data);
+    })
+    .catch(error => {
+        res.send(error)
+    })
+})
+
+server.get('/about',(req,res)=>{
+	res.sendFile(path.join(__dirname + '/about.html'));
+})
+
+server.get('/user-profile',(req,res)=>{
+	res.sendFile(path.join(__dirname + '/user-profile.html'));
+})
+
+server.get('/track-calorie',(req,res)=>{
+	res.sendFile(path.join(__dirname + '/track-calorie.html'));
+})
+
+server.get('/getreq',(req,res)=>{
+	user_id=req.query.user_id
+    db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0",[user_id])
+    .then(data=>res.json(getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])))
+    .catch(error=>res.json(error))
+})
+
+server.get('/getdaily',(req,res)=>{
+	user_id=req.query.user_id
+    req=0;
+    db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0",[user_id])
+    .then(data=>{
+        req=getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])
+    })
+    .catch(err=>console.log(err))  	        
+    db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
+    .then(data=>{
+        rem = parseFloat(req)-parseFloat(data[0]['cons'])+parseFloat(data[0]['exc'])
+        res.json({
+            "speech":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+            "displayText":"Your daily calorie "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned "+data[0]['exc']+". Remaining is "+rem,
+            "source":"daily-calorie"
+        })
+    })
+    .catch(err=>console.log(err))
+})
+
 /*
 * Function to handle v1 webhook requests from Dialogflow
 */
+/*
 function processV1Request (request, response) {
   let action = request.body.result.action; // https://dialogflow.com/docs/actions-and-parameters
   let parameters = request.body.result.parameters; // https://dialogflow.com/docs/actions-and-parameters
@@ -75,20 +195,23 @@ function processV1Request (request, response) {
   const app = new DialogflowApp({request: request, response: response});
 */
   // Create handlers for Dialogflow actions as well as a 'default' handler
+/*
   const actionHandlers = {
     // IMC intent has been matched, calculate imc with the parameters
-    'imc_action': () => {
+    'bmi_action': () => {
       // Use the Actions on Google lib to respond to Google requests; for other requests use JSON
       if (requestSource === googleAssistantRequest) {
         sendGoogleResponse('Hello, Welcome to my Dialogflow agent!'); // Send response to user
       } else {
         const height = request.body.result.parameters.height;
         const weight = request.body.result.parameters.weight;
-        const imc = ((100 * 100 * weight) / (height * height)).toFixed(2);
+        const bmi = ((100 * 100 * weight) / (height * height)).toFixed(2);
 
-        sendResponse('Si pesas ' + weight + ' kilos y mides ' + height + ' centímetros, tu indice de masa corporal es ' + imc + '.'); // Send response to user
+        sendResponse('If your weight is ' + weight + ' kg and height is ' + height + ' cm, your BMI is ' + bmi + '.'); // Send response to user
       }
     },
+    */
+
     // Food intent has been matched, call Fatsecret API
     'food_action': () => {
       // Use the Actions on Google lib to respond to Google requests; for other requests use JSON
@@ -99,7 +222,7 @@ function processV1Request (request, response) {
         const food = request.body.result.parameters.food;
         var result_id = 14102545;
         var result_name = 'no';
-        var result_data = 'desconocido';
+        var result_data = 'unknown';
 
         fatAPI
           .method('foods.search', {
@@ -113,7 +236,7 @@ function processV1Request (request, response) {
             result_name = results.foods.food.food_name;
             result_data = results.foods.food.food_description;
 
-            sendResponse('Buscando: ' + food + '. Encontrado: ' + result_name + '. ' + result_data ); // Send response to user
+            sendResponse('Search: ' + food + '. Found: ' + result_name + '. ' + result_data ); // Send response to user
 /*
             fatAPI
             .method('food.get', {
@@ -311,7 +434,7 @@ function processV2Request (request, response) {
   const actionHandlers = {
 
     // IMC intent has been matched, calculate imc with the parameters
-    'imc_action': () => {
+    'bmi_action': () => {
       // Use the Actions on Google lib to respond to Google requests; for other requests use JSON
       if (requestSource === googleAssistantRequest) {
         sendGoogleResponse('Hello, Welcome to my Dialogflow agent!'); // Send response to user
@@ -464,6 +587,29 @@ const richResponsesV2 = [
   {
     'platform': 'FACEBOOK',
     'card': richResponseV2Card
+  },
+  {
+    'platform' : 'LINE',
+      "line": {
+    "type": "template",
+    "altText": "This is a buttons template",
+    "template": {
+      "type": "buttons",
+      "thumbnailImageUrl": "https://media.giphy.com/media/A5F11Cbo7b8cw/giphy.gif",
+      "imageAspectRatio": "rectangle",
+      "imageSize": "cover",
+      "imageBackgroundColor": "#FFFFFF",
+      "title": "I am SlimMe",
+      "text": "Your virtual diet assistant",
+      "actions": [
+        {
+          "type": "message",
+          "label": "Okay",
+          "text": "Okay"
+        }
+      ]
+    }
+  },
   },
   {
     'platform': 'SLACK',

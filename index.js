@@ -181,6 +181,129 @@ server.get('/getdaily',(req,res)=>{
     .catch(err=>console.log(err))
 })
 
+server.get('/get-calorie',(req,res)=>{
+	rapid.call('Nutritionix', 'getFoodsNutrients', { 
+	 'applicationId': '4c64f5c3',
+	 'foodDescription': req.query.what,
+	 'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
+	}).on('success', (payload)=>{ 
+	 res.json(payload[0].foods[0].nf_calories);  
+	}).on('error', (payload)=>{
+	 res.send(payload); 
+	});
+})
+
+server.get('/get-burncalorie',(req,res)=>{
+	rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', { 
+        'exerciseDescription': req.query.what, 
+        'applicationSecret': 'ad4538d485233756557afd8aee6f530b', 
+        'applicationId': '4c64f5c3' 
+	}).on('success', (payload)=>{ 
+	 res.json(payload[0]);  
+	}).on('error', (payload)=>{
+	 res.send(payload); 
+	});
+})
+
+server.post('/',(req,res)=>{
+    var user_id = req.body.originalRequest.data.source.userId;
+
+    if(req.body.result.action=='get-weight'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-weight"
+            }
+            db.any("insert into consumer(user_id,timestamp,weight) values($1,now(),$2)",[user_id,req.body.result.resolvedQuery.split(' ')[0]])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
+            res.json(rsp)  	
+    } 	
+
+    if(req.body.result.action=='get-gender'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-gender"
+            }
+            db.any("update consumer set gender=$1 where user_id=$2",[req.body.result.resolvedQuery.toLowerCase(),user_id])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
+            res.json(rsp)  	
+    } 	
+
+    if(req.body.result.action=='get-height'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-height"
+            }
+            db.any("update consumer set height=$1 where user_id=$2",[req.body.result.resolvedQuery.split(' ')[0],user_id])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
+            res.json(rsp)  	
+    } 	
+    
+    if(req.body.result.action=='get-age'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-age"
+            }
+            db.any("update consumer set age=$1 where user_id=$2",[req.body.result.resolvedQuery.split(' ')[0],user_id])
+            .then(res=>console.log(res))
+            .catch(err=>console.log(err))
+            res.json(rsp)  	        
+    } 
+	
+    if(req.body.result.action=='get-activity'){
+            rsp = {
+                "speech":req.body.result.resolveQuery,
+                 "displayText":req.body.result.resolveQuery,
+                 "source":"get-activity"
+            }
+        db.any("update consumer set activity=$1 where user_id=$2",[req.body.result.resolvedQuery.toLowerCase(),user_id])
+        .then(res=>console.log(res))
+        .catch(err=>console.log(err))
+        res.json(rsp)  	
+    } 	
+
+    if(req.body.result.action=='get-weightgoal'){
+        db.any("update consumer set weightgoal=$1 where user_id=$2",[req.body.result.resolvedQuery,user_id])
+        .then(res=>console.log(res))
+        .catch(err=>console.log(err))
+        db.any("select * from consumer where user_id=$1 order by timestamp desc limit 1",[user_id])
+        .then(data=>{
+            rsp = {
+                "speech":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])+" kcal a day, Do you want to start your diet today?",
+                "displayText":"In order to reach your weight goal, you would have to consume "+getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])+" kcal a day, Do you want to start your diet today?",
+                "source":"get-weightgoal"
+            };
+            res.json(rsp)
+        })
+        .catch(err=>console.log(err))        
+    }
+
+    if(req.body.result.action=='daily-calorie'){
+        req=0;
+        db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0",[user_id])
+        .then(data=>{
+            req=getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])
+        })
+        .catch(err=>console.log(err))  	        
+        db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())",[user_id])
+        .then(data=>{
+            rem = parseFloat(req)-parseFloat(data[0]['cons'])+parseFloat(data[0]['exc'])
+            rsp = {
+                "speech":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem+" kCal.",
+                "displayText":"Your daily calorie needs is "+req+" k-calories. Intake "+data[0]['cons']+" kCal. Burned is "+data[0]['exc']+" kCal. Remaining is "+rem+" kCal.",
+                "source":"daily-calorie"
+            }
+        })
+        .catch(err=>console.log(err))
+        res.json(rsp)
+    }	
+	
 /*
 * Function to handle v1 webhook requests from Dialogflow
 */

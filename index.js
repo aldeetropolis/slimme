@@ -46,22 +46,6 @@ var processWebhook = function( request, response ){
   }
 }
 
-/* DISABLED
-// Firebase webhook
-exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, response) => {
-  console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
-  console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
-  if (request.body.result) {
-    processV1Request(request, response);
-  } else if (request.body.queryResult) {
-    processV2Request(request, response);
-  } else {
-    console.log('Invalid Request');
-    return response.status(400).end('Invalid Webhook Request (expecting v1 or v2 webhook request)');
-  }
-});
-*/
-
 // db.connect();
 db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
 .then(data=>console.log(data))
@@ -182,16 +166,38 @@ server.get('/getdaily',(req,res)=>{
 })
 
 server.get('/get-calorie',(req,res)=>{
-	rapid.call('Nutritionix', 'getFoodsNutrients', { 
+	/*rapid.call('Nutritionix', 'getFoodsNutrients', { 
 	 'applicationId': '4c64f5c3',
 	 'foodDescription': req.query.what,
-	 'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
-	}).on('success', (payload)=>{ 
-	 res.json(payload[0].foods[0].nf_calories);  
-	}).on('error', (payload)=>{
-	 res.send(payload); 
-	});
-})
+	 'applicationSecret': 'ad4538d485233756557afd8aee6f530b'*/
+	// Food
+   	fatAPI
+   	.method('foods.search', {
+    	 search_expression: 'Coffiest',
+     	 max_results: 10
+  	}) 
+        .then(function(results) {
+        res.json(results);
+        })
+	/*.catch(err => console.error(err)
+	
+		).on('success', (payload)=>{ 
+	 	res.json(payload[0].foods[0].nf_calories);  
+		}).on('error', (payload)=>{
+	 	res.send(payload); 
+		});
+	})
+*/
+
+/*
+food_id – the unique food identifier.
+food_name – the name of the food, not including the brand name. E.G.: "Instant Oatmeal".
+food_type – takes the value "Brand" or "Generic". Indicates whether the food is a brand or generic item – see food_type
+brand_name – the brand name, only when food_type is "Brand". E.G.: "Quaker".
+food_url – URL of this food item on www.fatsecret.com.
+food_description – A summary description of key nutritional values for a nominated serving size.
+*/
+
 
 server.get('/get-burncalorie',(req,res)=>{
 	rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', { 
@@ -303,6 +309,24 @@ server.post('/',(req,res)=>{
         .catch(err=>console.log(err))
         res.json(rsp)
     }	
+
+/* DISABLED
+// Firebase webhook
+exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, response) => {
+  console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
+  console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
+  if (request.body.result) {
+    processV1Request(request, response);
+  } else if (request.body.queryResult) {
+    processV2Request(request, response);
+  } else {
+    console.log('Invalid Request');
+    return response.status(400).end('Invalid Webhook Request (expecting v1 or v2 webhook request)');
+  }
+});
+
+
+*/	
 	
 /*
 * Function to handle v1 webhook requests from Dialogflow
@@ -372,7 +396,7 @@ function processV1Request (request, response) {
               result_data = result.food.servings.serving.calories;
               sendResponse('Buscando: ' + food + '. Encontrado: ' + result_name + '. ' + result_data ); // Send response to user
             });
-
+g
 */
           })
           .catch(err => console.error(err));

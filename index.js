@@ -8,8 +8,10 @@ const promise = require('bluebird');
 const initOptions = {
     promiseLib: promise // overriding the default (ES6 Promise);
 };
-const RapidAPI = require('rapidapi-connect');
-const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
+// const RapidAPI = require('rapidapi-connect');
+// const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
+const FatSecret = require('./fatsecret');
+const fatAPI = new FatSecret(process.env.FS_KEY, process.env.FS_SECRET);
 const pgp = require('pg-promise')(initOptions);
 pgp.pg.defaults.ssl = true;
 const db = pgp(process.env.DATABASE_URL);
@@ -25,6 +27,29 @@ const db = pgp(process.env.DATABASE_URL);
 // });
 
 // db.connect();
+function sendResponse (responseToUser) {
+    // if the response is a string send it as a response to the user
+    if (typeof responseToUser === 'string') {
+      let responseJson = {};
+      responseJson.speech = responseToUser; // spoken response
+      responseJson.displayText = responseToUser; // displayed response
+      response.json(responseJson); // Send response to Dialogflow
+    } else {
+      // If the response to the user includes rich responses or contexts send them to Dialogflow
+      let responseJson = {};
+      // If speech or displayText is defined, use it to respond (if one isn't defined use the other's value)
+      responseJson.speech = responseToUser.speech || responseToUser.displayText;
+      responseJson.displayText = responseToUser.displayText || responseToUser.speech;
+      // Optional: add rich messages for integrations (https://dialogflow.com/docs/rich-messages)
+      responseJson.data = responseToUser.data;
+      // Optional: add contexts (https://dialogflow.com/docs/contexts)
+      responseJson.contextOut = responseToUser.outputContexts;
+      console.log('Response to Dialogflow: ' + JSON.stringify(responseJson));
+      response.json(responseJson); // Send response to Dialogflow
+    }
+  }
+}
+
 db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
 .then(data=>console.log(data))
 .catch(error=>console.log(error))
@@ -148,15 +173,33 @@ server.get('/getdaily',(req,res)=>{
 })
 
 server.get('/get-calorie',(req,res)=>{
-	rapid.call('Nutritionix', 'getFoodsNutrients', { 
-	 'applicationId': '4c64f5c3',
-	 'foodDescription': req.query.what,
-	 'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
-	}).on('success', (payload)=>{ 
-	 res.json(payload[0].foods[0].nf_calories);  
-	}).on('error', (payload)=>{
-	 res.send(payload); 
-	});
+	// rapid.call('Nutritionix', 'getFoodsNutrients', { 
+	//  'applicationId': '4c64f5c3',
+	//  'foodDescription': req.query.what,
+	//  'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
+	// }).on('success', (payload)=>{ 
+	//  res.json(payload[0].foods[0].nf_calories);  
+	// }).on('error', (payload)=>{
+	//  res.send(payload); 
+    // });
+    const food = request.body.result.parameters.food;
+    var result_id = 14102545;
+    var result_name = 'no';
+    var result_data = 'unknown';
+
+    fatAPI
+    .method('foods.search', {
+        format: 'json',
+        search_expression: food,
+        max_results: 1
+    })
+    .then(function(results) {
+        console.log(results.foods.food);
+        result_id = results.foods.food.food_id;
+        result_name = results.foods.food.food_name;
+        result_data = results.foods.food.food_description;
+
+    sendResponse('Search: ' + food + '. Found: ' + result_name + '. ' + result_data );
 })
 
 server.get('/get-burncalorie',(req,res)=>{

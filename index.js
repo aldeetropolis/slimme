@@ -21,9 +21,7 @@ db.any('create table if not exists consumer(id serial primary key, user_id varch
 .catch(error=>console.log(error))
 
 const server = express(); 
-server.use(bodyParser.urlencoded({ 
-    extended: true 
-})); 
+server.use(bodyParser.urlencoded({extended: true })); 
 
 function getRequiredCalorie(weight, gender, height, age, activity, weightgoal){
     const properWeight = Math.round(height * height * 0.0022);
@@ -133,15 +131,6 @@ server.get('/getdaily',(req,res)=>{
 })
 
 server.get('/get-calorie',(req,res)=>{
-	// rapid.call('Nutritionix', 'getFoodsNutrients', { 
-	//  'applicationId': '4c64f5c3',
-	//  'foodDescription': req.query.what,
-	//  'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
-	// }).on('success', (payload)=>{ 
-	//  res.json(payload[0].foods[0].nf_calories);  
-	// }).on('error', (payload)=>{
-	//  res.send(payload); 
-    // });
     const food = request.body.result.parameters.food;
     var result_id = 14102545;
     var result_name = 'no';
@@ -158,8 +147,8 @@ server.get('/get-calorie',(req,res)=>{
         result_id = results.foods.food.food_id;
         result_name = results.foods.food.food_name;
         result_data = results.foods.food.food_description;
-
-    res.send('Search: ' + food + '. Found: ' + result_name + '. ' + result_data );
+    res.send('Search: '+food +'. Found: '+ result_name + '. ' + result_data);
+    })
 })
 
 server.get('/get-burncalorie',(req,res)=>{

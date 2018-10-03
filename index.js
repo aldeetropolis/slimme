@@ -153,7 +153,7 @@ server.get('/get-calorie',(req,res)=>{
             .then(function(result) {
               console.log(result.food);
               result_name = result.food.food_name;
-              result_data = JSON.stringify(result.food.servings);
+              result_data = JSON.stringify(result.food.servings.serving[0]);
               res.send('Result: ' + food + '. Food: ' + result_name + '. Data: ' + result_data ); // Send response to user
             });
     })

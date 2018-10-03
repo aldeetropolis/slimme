@@ -154,7 +154,10 @@ server.get('/get-food',(req,res)=>{
               console.log(result.food);
               result_name = result.food.food_name;
               result_data = JSON.stringify(result.food.servings.serving[0].calories);
-              res.send('Result: ' + food + '. Food: ' + result_name + '. Calories: ' + result_data + '. Size: 1 '+result.food.servings.serving[0].measurement_description); // Send response to user
+	      result_data2 = JSON.stringify(result.food.servings.serving[0].carbohydrate);
+	      result_data3 = JSON.stringify(result.food.servings.serving[0].protein);
+	      result_data4 = JSON.stringify(result.food.servings.serving[0].fat);
+              res.send('Result: ' + food + '. Food: ' + result_name + '. Calories: ' + result_data + '. Carbohydrate (gr): ' + result_data2 + '. Protein (gr): ' + result_data3 + '. Fat (gr): ' + result_data4 + '. Size: 1 '+result.food.servings.serving[0].measurement_description); // Send response to user
             });
     })
 })
@@ -295,6 +298,8 @@ server.post('/',(req,res)=>{
 				rsp = {
 					"speech":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
 					"displayText":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
+					result_name + '. Per 1 '+result.food.servings.serving[0].measurement_description + '- Calories: ' + result_data + ' kcal |' + ' Carbs: ' + result_data2 + ' g |' + ' Protein: ' + result_data3 + ' g |' + ' Fat: ' + result_data4 + ' g' 
+					Per 1 cup - Calories: 146kcal | Fat: 7.93g | Carbs: 11.03g | Protein: 7.86g 
 					"source":"get-food"
 				};
 				 res.json(rsp)

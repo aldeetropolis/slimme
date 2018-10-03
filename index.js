@@ -271,7 +271,8 @@ server.post('/',(req,res)=>{
     }	
 	
     if(req.body.result.action=='get-calorie'){
-	    var food = req.body.result.resolvedQuery
+	    var food = req.body.result.resolvedQuery;
+	    var rsp={};
 	    fatAPI
 		    .method('foods.search', {
         		format: 'json',
@@ -296,9 +297,9 @@ server.post('/',(req,res)=>{
 					"displayText":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
 					"source":"get-calorie"
 				};
-				
+				 res.json(rsp)
 			})
-		    res.json(rsp)
+		   
 	    })
     } 
 

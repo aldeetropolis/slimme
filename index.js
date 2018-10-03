@@ -271,52 +271,34 @@ server.post('/',(req,res)=>{
     }	
 	
     if(req.body.result.action=='get-calorie'){
-        //db.run("insert into consumer(user_id) values(?)"+user_id);
-//         rapid.call('Nutritionix', 'getFoodsNutrients', { 
-//             'applicationId': '4c64f5c3',
-//             'foodDescription': req.body.result.resolvedQuery,
-//             'applicationSecret': 'ad4538d485233756557afd8aee6f530b'
-//         }).on('success', (payload)=>{ 
-//             rsp = {
-//                 "speech":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
-//                 "displayText":"You consume "+payload[0].foods[0].nf_calories+" k-calories.",
-//                 "source":"get-calorie"
-//             }
-//             db.any("insert into consumer(user_id,timestamp,consume) values($1,now(),$2)",[user_id,payload[0].foods[0].nf_calories])
-//             .then(row=>console.log(row))
-//             .catch(err=>console.log(err))
-//             res.json(rsp)  	
-//         }).on('error', (payload)=>{
-//             res.send(payload); 
-//         });
-	fatAPI
-    .method('foods.search', {
-        format: 'json',
-        search_expression: food,
-        max_results: 1
-    })
-    .then(function(results) {
-        console.log(results.foods.food);
-        result_id = results.foods.food.food_id;
-        result_name = results.foods.food.food_name;
-        result_data = results.foods.food.food_description;
-	fatAPI
-            .method('food.get', {
-              format: 'json',
-              food_id: result_id
-            })
-            .then(function(result) {
-              console.log(result.food);
-              result_name = result.food.food_name;
-//               result_data = JSON.stringify(result.food.servings.serving[0].calories);
-		rsp = {
-                "speech":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
-                "displayText":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
-                "source":"get-calorie"
-            }
-		res.json(rsp)
-    	})
-    } 
+	    fatAPI
+		    .method('foods.search', {
+        		format: 'json',
+        		search_expression: food,
+        		max_results: 1
+	    })
+		    .then(function(results) {
+			console.log(results.foods.food);
+			result_id = results.foods.food.food_id;
+			result_name = results.foods.food.food_name;
+			result_data = results.foods.food.food_description;
+			fatAPI
+				.method('food.get', {
+				format: 'json',
+				food_id: result_id
+			})
+				.then(function(result) {
+				console.log(result.food);
+              			result_name = result.food.food_name;
+				rsp = {
+					"speech":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
+					"displayText":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
+					"source":"get-calorie"
+				};
+				
+			})
+		    res.json(rsp)
+	} 
 
     if(req.body.result.action=='burn-calorie'){
         rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  

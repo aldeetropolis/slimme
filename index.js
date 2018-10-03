@@ -130,7 +130,7 @@ server.get('/getdaily',(req,res)=>{
     .catch(err=>console.log(err))
 })
 
-server.get('/get-calorie',(req,res)=>{
+server.get('/get-food',(req,res)=>{
     const food = req.query.food;
 
     fatAPI
@@ -270,7 +270,7 @@ server.post('/',(req,res)=>{
         res.json(rsp)
     }	
 	
-    if(req.body.result.action=='get-calorie'){
+    if(req.body.result.action=='get-food'){
 	    var food = req.body.result.resolvedQuery;
 	    var rsp={};
 	    fatAPI
@@ -295,7 +295,7 @@ server.post('/',(req,res)=>{
 				rsp = {
 					"speech":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
 					"displayText":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
-					"source":"get-calorie"
+					"source":"get-food"
 				};
 				 res.json(rsp)
 			})

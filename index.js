@@ -15,50 +15,10 @@ const fatAPI = new FatSecret(process.env.FS_KEY, process.env.FS_SECRET);
 const pgp = require('pg-promise')(initOptions);
 pgp.pg.defaults.ssl = true;
 const db = pgp(process.env.DATABASE_URL);
-//const sqlite = require('sqlite3').verbose();
-//const db = new sqlite.Database('slimme.db');
-//db.run("CREATE TABLE IF NOT EXISTS consumer (user_id,timestamp datetime default current_timestamp,age,weight,height,gender,weightgoal,consume,activity,exercise)");
-
-// const { Client } = require('pg');
-
-// const db = new Client({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: true,
-// });
-
-// db.connect();
-function sendResponse (responseToUser) {
-    // if the response is a string send it as a response to the user
-    if (typeof responseToUser === 'string') {
-      let responseJson = {};
-      responseJson.speech = responseToUser; // spoken response
-      responseJson.displayText = responseToUser; // displayed response
-      response.json(responseJson); // Send response to Dialogflow
-    } else {
-      // If the response to the user includes rich responses or contexts send them to Dialogflow
-      let responseJson = {};
-      // If speech or displayText is defined, use it to respond (if one isn't defined use the other's value)
-      responseJson.speech = responseToUser.speech || responseToUser.displayText;
-      responseJson.displayText = responseToUser.displayText || responseToUser.speech;
-      // Optional: add rich messages for integrations (https://dialogflow.com/docs/rich-messages)
-      responseJson.data = responseToUser.data;
-      // Optional: add contexts (https://dialogflow.com/docs/contexts)
-      responseJson.contextOut = responseToUser.outputContexts;
-      console.log('Response to Dialogflow: ' + JSON.stringify(responseJson));
-      response.json(responseJson); // Send response to Dialogflow
-    }
-  }
-}
 
 db.any('create table if not exists consumer(id serial primary key, user_id varchar(200),timestamp timestamp,age int,weight int, height int,gender varchar(10),weightgoal varchar(100),consume int,activity varchar(100),exercise int);')
 .then(data=>console.log(data))
 .catch(error=>console.log(error))
-//   if (err) throw err;
-//   for (let row of res.rows) {
-//     console.log(JSON.stringify(row));
-//   }
-//   db.end();
-// });
 
 const server = express(); 
 server.use(bodyParser.urlencoded({ 
@@ -199,7 +159,7 @@ server.get('/get-calorie',(req,res)=>{
         result_name = results.foods.food.food_name;
         result_data = results.foods.food.food_description;
 
-    sendResponse('Search: ' + food + '. Found: ' + result_name + '. ' + result_data );
+    res.send('Search: ' + food + '. Found: ' + result_name + '. ' + result_data );
 })
 
 server.get('/get-burncalorie',(req,res)=>{

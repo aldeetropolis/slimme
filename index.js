@@ -132,9 +132,6 @@ server.get('/getdaily',(req,res)=>{
 
 server.get('/get-calorie',(req,res)=>{
     const food = req.query.food;
-    var result_id = 14102545;
-    var result_name = 'no';
-    var result_data = 'unknown';
 
     fatAPI
     .method('foods.search', {
@@ -147,7 +144,18 @@ server.get('/get-calorie',(req,res)=>{
         result_id = results.foods.food.food_id;
         result_name = results.foods.food.food_name;
         result_data = results.foods.food.food_description;
-        res.send('Search: '+food +'. Found: '+ result_name + '. ' + result_data);
+        //res.send('Search: '+food +'. Found: '+ result_name + '. ' + result_data);
+	fatAPI
+            .method('food.get', {
+              format: 'json',
+              food_id: result_id
+            })
+            .then(function(result) {
+              console.log(result.food);
+              result_name = result.food.food_name;
+              result_data = result.food.servings.serving.calories;
+              res.send('Result: ' + food + '. Food: ' + result_name + '. ' + result_data ); // Send response to user
+            });
     })
 })
 

@@ -296,10 +296,8 @@ server.post('/',(req,res)=>{
 				console.log(result.food);
               			result_name = result.food.food_name;
 				rsp = {
-					"speech":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
-					"displayText":"You consume "+result.food.servings.serving[0].calories+" k-calories.",
-					result_name + '. Per 1 '+result.food.servings.serving[0].measurement_description + '- Calories: ' + result_data + ' kcal |' + ' Carbs: ' + result_data2 + ' g |' + ' Protein: ' + result_data3 + ' g |' + ' Fat: ' + result_data4 + ' g' 
-					Per 1 cup - Calories: 146kcal | Fat: 7.93g | Carbs: 11.03g | Protein: 7.86g 
+					"speech":"result_name + '. Per 1 '+result.food.servings.serving[0].measurement_description + '- Calories: ' + result_data + ' kcal |' + ' Carbs: ' + result_data2 + ' g |' + ' Protein: ' + result_data3 + ' g |' + ' Fat: ' + result_data4 + ' g'.",
+					"displayText":"result_name + '. Per 1 '+result.food.servings.serving[0].measurement_description + '- Calories: ' + result_data + ' kcal |' + ' Carbs: ' + result_data2 + ' g |' + ' Protein: ' + result_data3 + ' g |' + ' Fat: ' + result_data4 + ' g'.",
 					"source":"get-food"
 				};
 				 res.json(rsp)

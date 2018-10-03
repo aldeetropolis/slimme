@@ -131,7 +131,7 @@ server.get('/getdaily',(req,res)=>{
 })
 
 server.get('/get-calorie',(req,res)=>{
-    const food = request.body.result.parameters.food;
+    const food = req.query.food;
     var result_id = 14102545;
     var result_name = 'no';
     var result_data = 'unknown';
@@ -147,7 +147,7 @@ server.get('/get-calorie',(req,res)=>{
         result_id = results.foods.food.food_id;
         result_name = results.foods.food.food_name;
         result_data = results.foods.food.food_description;
-    res.send('Search: '+food +'. Found: '+ result_name + '. ' + result_data);
+        res.send('Search: '+food +'. Found: '+ result_name + '. ' + result_data);
     })
 })
 

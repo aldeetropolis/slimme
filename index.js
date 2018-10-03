@@ -296,8 +296,8 @@ server.post('/',(req,res)=>{
 				console.log(result.food);
               			result_name = result.food.food_name;
 				rsp = {
-					"speech":"result_name + '. Per 1 '+result.food.servings.serving[0].measurement_description + '- Calories: ' + result_data + ' kcal |' + ' Carbs: ' + result_data2 + ' g |' + ' Protein: ' + result_data3 + ' g |' + ' Fat: ' + result_data4 + ' g'.",
-					"displayText":"result_name + '. Per 1 '+result.food.servings.serving[0].measurement_description + '- Calories: ' + result_data + ' kcal |' + ' Carbs: ' + result_data2 + ' g |' + ' Protein: ' + result_data3 + ' g |' + ' Fat: ' + result_data4 + ' g'.",
+					"speech": result_name+". Per 1 "+result.food.servings.serving[0].measurement_description+"- Calories: "+result.food.servings.serving[0].calories+" kcal |"+" Carbs: "+result.food.servings.serving[0].carbohydrate+" g |"+" Protein: "+result.food.servings.serving[0].protein+" g |" + " Fat: " +result.food.servings.serving[0].fat+ " g.",
+					"displayText": result_name+". Per 1 "+result.food.servings.serving[0].measurement_description+"- Calories: "+result.food.servings.serving[0].calories+" kcal |"+" Carbs: "+result.food.servings.serving[0].carbohydrate+" g |"+" Protein: "+result.food.servings.serving[0].protein+" g |" +" Fat: " +result.food.servings.serving[0].fat+ " g.",
 					"source":"get-food"
 				};
 				 res.json(rsp)

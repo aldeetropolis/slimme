@@ -153,8 +153,8 @@ server.get('/get-calorie',(req,res)=>{
             .then(function(result) {
               console.log(result.food);
               result_name = result.food.food_name;
-              result_data = JSON.stringify(result.food.servings);
-              res.send('Result: ' + food + '. Food: ' + result_name + '. ' + result_data ); // Send response to user
+              result_data = JSON.stringify(result.food.servings[0].calories);
+              res.send('Result: ' + food + '. Food: ' + result_name + '. Calories: ' + result_data ); // Send response to user
             });
     })
 })

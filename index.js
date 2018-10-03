@@ -298,7 +298,8 @@ server.post('/',(req,res)=>{
 				
 			})
 		    res.json(rsp)
-	} 
+	    })
+    } 
 
     if(req.body.result.action=='burn-calorie'){
         rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  

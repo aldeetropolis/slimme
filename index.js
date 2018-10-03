@@ -271,6 +271,7 @@ server.post('/',(req,res)=>{
     }	
 	
     if(req.body.result.action=='get-calorie'){
+	    var food = req.body.result.resolvedQuery
 	    fatAPI
 		    .method('foods.search', {
         		format: 'json',

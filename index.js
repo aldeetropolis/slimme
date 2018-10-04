@@ -153,25 +153,41 @@ server.get('/get-food',(req,res)=>{
             .then(function(result) {
               console.log(result.food);
               result_name = result.food.food_name;
-              result_data = JSON.stringify(result.food.servings.serving[1].calories);
-	      result_data2 = JSON.stringify(result.food.servings.serving[1].carbohydrate);
-	      result_data3 = JSON.stringify(result.food.servings.serving[1].protein);
-	      result_data4 = JSON.stringify(result.food.servings.serving[1].fat);
+              result_data = JSON.stringify(result.food.servings.serving[0].calories);
+	      result_data2 = JSON.stringify(result.food.servings.serving[0].carbohydrate);
+	      result_data3 = JSON.stringify(result.food.servings.serving[0].protein);
+	      result_data4 = JSON.stringify(result.food.servings.serving[0].fat);
               res.send('Result: ' + food + '. Food: ' + result_name + '. Calories: ' + result_data + '. Carbohydrate (gr): ' + result_data2 + '. Protein (gr): ' + result_data3 + '. Fat (gr): ' + result_data4 + '. Size: 1 '+result.food.servings.serving[0].measurement_description); // Send response to user
             });
     })
 })
 
-server.get('/get-burncalorie',(req,res)=>{
-	rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', { 
-        'exerciseDescription': req.query.what, 
-        'applicationSecret': 'ad4538d485233756557afd8aee6f530b', 
-        'applicationId': '4c64f5c3' 
-	}).on('success', (payload)=>{ 
-	 res.json(payload[0]);  
-	}).on('error', (payload)=>{
-	 res.send(payload); 
-	});
+server.get('/get-exercise',(req,res)=>{
+    const exercise = req.query.exercise;
+
+    fatAPI
+    .method('exercises.get', {
+        format: 'json',
+        search_expression: exercise,
+        max_results: 1
+    })
+    .then(function(results) {
+        console.log(results.exercises.exercise);
+        result_id = results.exercises.exercise.exercise_id;
+        result_name = results.exercises.exercise.exercise_name;
+        //res.send('Search: '+food +'. Found: '+ result_name + '. ' + result_data);
+	fatAPI
+            .method('exercise_entries.get', {
+              format: 'json',
+              exercise_id: result_id
+            })
+            .then(function(result) {
+              console.log(result.exercise);
+              result_name = result.exercise.exercise_name;
+              result_data = JSON.stringify(result.exercise.minutes.minutes[0].calories);
+              res.send('Result: ' + exercise + '. Exercise: ' + result_name + '. Calories burned: ' + result_data + 'kcal'+'. Minutes: 1 '+result.exercise.minutes.minutes[0].minutes); // Send response to user
+            });
+    })
 })
 
 server.post('/',(req,res)=>{
@@ -296,8 +312,8 @@ server.post('/',(req,res)=>{
 				console.log(result.food);
               			result_name = result.food.food_name;
 				rsp = {
-					"speech": result_name+". Per 1 "+result.food.servings.serving[0].measurement_description+": Calories: "+result.food.servings.serving[0].calories+" kcal |"+" Carbs: "+result.food.servings.serving[0].carbohydrate+" g |"+" Protein: "+result.food.servings.serving[0].protein+" g |" + " Fat: " +result.food.servings.serving[0].fat+ " g.",
-					"displayText": result_name+". Per 1 "+result.food.servings.serving[0].measurement_description+": Calories: "+result.food.servings.serving[0].calories+" kcal |"+" Carbs: "+result.food.servings.serving[0].carbohydrate+" g |"+" Protein: "+result.food.servings.serving[0].protein+" g |" +" Fat: " +result.food.servings.serving[0].fat+ " g.",
+					"speech": result_name+". Per 1 "+result.food.servings.serving[0].measurement_description+": Calories: "+result.food.servings.serving[0].calories+" kcal |"+" Carbs: "+result.food.servings.serving[0].carbohydrate+" g |"+" Protein: "+result.food.servings.serving[0].protein+" g |" + " Fat: " +result.food.servings.serving[0].fat+ " g. Is this kind of food correct? (Yes/No)",
+					"displayText": result_name+". Per 1 "+result.food.servings.serving[0].measurement_description+": Calories: "+result.food.servings.serving[0].calories+" kcal |"+" Carbs: "+result.food.servings.serving[0].carbohydrate+" g |"+" Protein: "+result.food.servings.serving[0].protein+" g |" +" Fat: " +result.food.servings.serving[0].fat+ " g. Is this kind of food correct? (Yes/No)",
 					"source":"get-food"
 				};
 				 res.json(rsp)
@@ -306,8 +322,8 @@ server.post('/',(req,res)=>{
 	    })
     } 
 
-    if(req.body.result.action=='burn-calorie'){
-        rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  
+    if(req.body.result.action=='get-exercise'){
+        /*rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  
             'exerciseDescription': req.body.result.resolvedQuery, 
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b', 
             'applicationId': '4c64f5c3' 
@@ -324,7 +340,7 @@ server.post('/',(req,res)=>{
         }).on('error', (payload)=>{ 
             res.send(payload)  
         })
-    }   
+    } */  
 })
 
 server.listen(PORT, () => { 

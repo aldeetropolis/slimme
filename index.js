@@ -323,7 +323,7 @@ server.post('/',(req,res)=>{
     } 
 
     if(req.body.result.action=='get-exercise'){
-        /*rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  
+        rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  
             'exerciseDescription': req.body.result.resolvedQuery, 
             'applicationSecret': 'ad4538d485233756557afd8aee6f530b', 
             'applicationId': '4c64f5c3' 
@@ -340,7 +340,7 @@ server.post('/',(req,res)=>{
         }).on('error', (payload)=>{ 
             res.send(payload)  
         })
-    } */  
+    }   
 })
 
 server.listen(PORT, () => { 

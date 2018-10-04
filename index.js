@@ -323,6 +323,18 @@ server.post('/',(req,res)=>{
 		   
 	    })
     } 
+	
+    if(req.body.result.action=='slimmeget-food.slimmeget-food-yes.slimmeget-food-yes-custom'){
+	    var food = req.body.result.resolvedQuery;
+	    rsp = {
+                "speech":food,
+                "displayText":food,
+                "source":"slimmeget-food.slimmeget-food-yes.slimmeget-food-yes-custom"
+            }
+	    res.json(rsp)
+	    
+    } 
+	
 
     if(req.body.result.action=='get-exercise'){
         rapid.call('Nutritionix', 'getCaloriesBurnedForExercises', {  

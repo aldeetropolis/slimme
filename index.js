@@ -191,7 +191,7 @@ server.get('/get-exercise',(req,res)=>{
 })
 
 server.post('/',(req,res)=>{
-    if (req.body.originalRequest.data)
+    if (req.body.originalRequest)
     var user_id = req.body.originalRequest.data.source.userId;
     else var user_id="null, from browser/CURL";
 

@@ -8,6 +8,7 @@ const promise = require('bluebird');
 const initOptions = {
     promiseLib: promise // overriding the default (ES6 Promise);
 };
+// commit1
 // const RapidAPI = require('rapidapi-connect');
 // const rapid = new RapidAPI("default-application_5acdd39de4b06ec3937ba3fd","16a6f4ee-836d-43d3-85d2-370fbebc324c");
 const FatSecret = require('./fatsecret');

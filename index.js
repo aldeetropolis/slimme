@@ -158,7 +158,7 @@ server.get('/get-food',(req,res)=>{
 	      result_data2 = JSON.stringify(result.food.servings.serving[0].carbohydrate);
 	      result_data3 = JSON.stringify(result.food.servings.serving[0].protein);
 	      result_data4 = JSON.stringify(result.food.servings.serving[0].fat);
-              res.send('Result: ' + food + '. Food: ' + result_name + '. Calories: ' + result_data + '. Carbohydrate (gr): ' + result_data2 + '. Protein (gr): ' + result_data3 + '. Fat (gr): ' + result_data4 + '. Size: 1 '+result.food.servings.serving[0].measurement_description); // Send response to user
+              res.send('Result: ' + food + '. Food: ' + result_name + '. Calories: ' + result_data + '. Carbohydrate (gr): ' + result_data2 + '. \nProtein (gr): ' + result_data3 + '. Fat (gr): ' + result_data4 + '. Size: 1 '+result.food.servings.serving[0].measurement_description); // Send response to user
             });
     })
 })

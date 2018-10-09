@@ -183,9 +183,7 @@ server.get('/getdaily', (req, res) => {
 
 server.get('/get-food', (req, res) => {
   const food = req.query.food;
-  const number = req.query.number;
-
-  console.log(req.query);
+  const count = req.query.count;
 
   fatAPI
     .method('foods.search', {
@@ -206,30 +204,30 @@ server.get('/get-food', (req, res) => {
         })
         .then(function(result) {
           console.log(result.food);
+
+          calories = count * result.food.servings.serving[0].calories;
+          carbohydrate = count * result.food.servings.serving[0].carbohydrate;
+          protein = count * result.food.servings.serving[0].protein;
+          fat = count * result.food.servings.serving[0].fat;
+
           result_name = result.food.food_name;
-          result_data = JSON.stringify(
-            result.food.servings.serving[0].calories
-          );
-          result_data2 = JSON.stringify(
-            result.food.servings.serving[0].carbohydrate
-          );
-          result_data3 = JSON.stringify(
-            result.food.servings.serving[0].protein
-          );
-          result_data4 = JSON.stringify(result.food.servings.serving[0].fat);
+          //   result_data = JSON.stringify();
+          //   result_data2 = JSON.stringify();
+          //   result_data3 = JSON.stringify();
+          //   result_data4 = JSON.stringify();
           res.send(
             'Result: ' +
               food +
               '. Food: ' +
               result_name +
               '. Calories: ' +
-              result_data +
+              calories +
               '. Carbohydrate (gr): ' +
-              result_data2 +
-              '. \nProtein (gr): ' +
-              result_data3 +
+              carbohydrate +
+              '. Protein (gr): ' +
+              protein +
               '. Fat (gr): ' +
-              result_data4 +
+              fat +
               '. Size: 1 ' +
               result.food.servings.serving[0].measurement_description
           ); // Send response to user

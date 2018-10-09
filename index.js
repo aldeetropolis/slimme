@@ -185,6 +185,8 @@ server.get('/get-food', (req, res) => {
   const food = req.query.food;
   const number = req.query.number;
 
+  console.log(req.query);
+
   fatAPI
     .method('foods.search', {
       format: 'json',

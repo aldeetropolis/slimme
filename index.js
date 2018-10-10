@@ -210,6 +210,11 @@ server.get('/get-food', (req, res) => {
           protein = count * result.food.servings.serving[0].protein;
           fat = count * result.food.servings.serving[0].fat;
 
+          resultCalories = calories.toFixed(2);
+          resultCarbohydrate = carbohydrate.toFixed(2);
+          resultProtein = protein.toFixed(2);
+          resultFat = fat.toFixed(2);
+
           result_name = result.food.food_name;
           //   result_data = JSON.stringify();
           //   result_data2 = JSON.stringify();
@@ -221,14 +226,15 @@ server.get('/get-food', (req, res) => {
               '. Food: ' +
               result_name +
               '. Calories: ' +
-              calories +
+              resultCalories +
               '. Carbohydrate (gr): ' +
-              carbohydrate +
+              resultCarbohydrate +
               '. Protein (gr): ' +
-              protein +
+              resultProtein +
               '. Fat (gr): ' +
-              fat +
-              '. Size: 1 ' +
+              resultFat +
+              '. Size: ' +
+              count +
               result.food.servings.serving[0].measurement_description
           ); // Send response to user
         });

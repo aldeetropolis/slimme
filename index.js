@@ -183,7 +183,7 @@ server.get('/getdaily', (req, res) => {
 
 server.get('/get-food', (req, res) => {
   const food = req.query.food;
-  const count = req.query.count;
+  const count = req.query.number;
 
   fatAPI
     .method('foods.search', {

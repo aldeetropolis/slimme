@@ -187,8 +187,8 @@ server.get('/get-myProfile', (req, res) => {
             proper = properWeight(data[0]['height'])
             console.log(proper)
             res.json({
-                "speech": "Your profile : Age:" + data[0]['age'] + "y. Gender:" + data[0]['gender'] + ". Weight " + data[0]['weight'] + "kg. Height " + data[0]['height'] + "cm. Ideal Body Weight" + proper + "kg.",
-                "displayText": "Your profile : Age:" + data[0]['age'] + "y. Gender:" + data[0]['gender'] + ". Weight " + data[0]['weight'] + "kg. Height " + data[0]['height'] + "cm. Ideal Body Weight" + proper + "kg.",
+                "speech": "Your profile : Age: " + data[0]['age'] + "y. Gender: " + data[0]['gender'] + ". Weight " + data[0]['weight'] + "kg. Height " + data[0]['height'] + "cm. Ideal Body Weight " + proper + "kg.",
+                "displayText": "Your profile : Age: " + data[0]['age'] + "y. Gender: " + data[0]['gender'] + ". Weight " + data[0]['weight'] + "kg. Height " + data[0]['height'] + "cm. Ideal Body Weight " + proper + "kg.",
                 "source": "my-profile"
             })
         })
@@ -333,6 +333,22 @@ server.post('/', (req, res) => {
         }).on('error', (payload) => {
             res.send(payload)
         })
+    }
+
+    if (req.body.result.action == 'my-profile') {
+        user_id = req.query.user_id
+        req = 0;
+        db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0", [user_id])
+            .then(data => {
+                proper = properWeight(data[0]['height'])
+                console.log(proper)
+                res.json({
+                    "speech": "Your profile : Age: " + data[0]['age'] + "y. Gender: " + data[0]['gender'] + ". Weight " + data[0]['weight'] + "kg. Height " + data[0]['height'] + "cm. Ideal Body Weight " + proper + "kg.",
+                    "displayText": "Your profile : Age: " + data[0]['age'] + "y. Gender: " + data[0]['gender'] + ". Weight " + data[0]['weight'] + "kg. Height " + data[0]['height'] + "cm. Ideal Body Weight " + proper + "kg.",
+                    "source": "my-profile"
+                })
+            })
+            .catch(err => console.log(err))
     }
 
 })

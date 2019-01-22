@@ -265,8 +265,8 @@ server.post('/', (req, res) => {
         db.any("select * from consumer where user_id=$1 order by timestamp desc limit 1", [user_id])
             .then(data => {
                 rsp = {
-                    "speech": "In order to reach your weight goal, you would have to consume " + getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal']) + " kcal a day, Do you want to start your diet today?",
-                    "displayText": "In order to reach your weight goal, you would have to consume " + getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal']) + " kcal a day, Do you want to start your diet today?",
+                    "speech": "In order to reach your weight goal, you would have to consume " + getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal']) + " kcal a day, Do you want to start your diet today?(Yes?No)",
+                    "displayText": "In order to reach your weight goal, you would have to consume " + getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal']) + " kcal a day, Do you want to start your diet today?(Yes/No)",
                     "source": "get-weightgoal"
                 };
                 res.json(rsp)

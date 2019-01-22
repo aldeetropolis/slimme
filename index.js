@@ -336,7 +336,6 @@ server.post('/', (req, res) => {
     }
 
     if (req.body.result.action == 'my-profile') {
-        user_id = req.query.user_id
         req = 0;
         db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0", [user_id])
             .then(data => {

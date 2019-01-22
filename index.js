@@ -285,8 +285,8 @@ server.post('/', (req, res) => {
             .then(data => {
                 rem = parseFloat(req) - parseFloat(data[0]['cons']) + parseFloat(data[0]['exc'])
                 rsp = {
-                    "speech": "Your daily calorie needs is " + req + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
-                    "displayText": "Your daily calorie needs is " + req + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
+                    "speech": "Your daily calorie needs is " + getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal']) + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
+                    "displayText": "Your daily calorie needs is " + getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal']) + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
                     "source": "daily-calorie"
                 }
             })

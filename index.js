@@ -277,6 +277,7 @@ server.post('/', (req, res) => {
 
     if (req.body.result.action == 'daily-calorie') {
         req = 0;
+        let rsp = {};
         db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0", [user_id])
             .then(data => {
             req = getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])            

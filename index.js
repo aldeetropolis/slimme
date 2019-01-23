@@ -278,19 +278,19 @@ server.post('/', (req, res) => {
         req = 0;
         db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0", [user_id])
             .then(data => {
-                req = getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])
-            })
-            .catch(err => console.log(err))
-        db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())", [user_id])
-            .then(data => {
-                rem = parseFloat(req) - parseFloat(data[0]['cons']) + parseFloat(data[0]['exc'])
-                rsp = {
-                    "speech": "Your daily calorie needs is " + req + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
-                    "displayText": "Your daily calorie needs is " + req + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
-                    "source": "daily-calorie"
-                }
-            })
-            .catch(err => console.log(err))
+                req = getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])            
+                db.any("select sum(consume) as cons,sum(exercise) as exc from consumer where user_id=$1 and date(timestamp)=date(now())", [user_id])
+                .then(data => {
+                    rem = parseFloat(req) - parseFloat(data[0]['cons']) + parseFloat(data[0]['exc'])
+                    rsp = {
+                        "speech": "Your daily calorie needs is " + req + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
+                        "displayText": "Your daily calorie needs is " + req + " k-calories. Intake " + data[0]['cons'] + " kCal. Burned is " + data[0]['exc'] + " kCal. Remaining is " + rem + " kCal.",
+                        "source": "daily-calorie"
+                    }
+                })
+                .catch(err => console.log(err))
+        })
+        .catch(err => console.log(err))
         res.json(rsp)
     }
 

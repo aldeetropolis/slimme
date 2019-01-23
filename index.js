@@ -259,7 +259,6 @@ server.post('/', (req, res) => {
     }
 
     if (req.body.result.action == 'get-weightgoal') {
-        rsp ={};
         db.any("update consumer set weightgoal=$1 where user_id=$2", [req.body.result.resolvedQuery, user_id])
             .then(res => console.log(res))
             .catch(err => console.log(err))
@@ -277,9 +276,7 @@ server.post('/', (req, res) => {
 
     if (req.body.result.action == 'daily-calorie') {
         req = 0;
-        rsp.speech='';
-        rsp.displayText='';
-        rsp.source='daily-calorie';
+        let rsp;
         db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0", [user_id])
             .then(data => {
             req = getRequiredCalorie(data[0]['weight'], data[0]['gender'], data[0]['height'], data[0]['age'], data[0]['activity'], data[0]['weightgoal'])            
@@ -300,7 +297,6 @@ server.post('/', (req, res) => {
 
     if (req.body.result.action == 'get-calorie') {
         //db.run("insert into consumer(user_id) values(?)"+user_id);
-        rsp = {};
         rapid.call('Nutritionix', 'getFoodsNutrients', {
             'applicationId': '4c64f5c3',
             'foodDescription': req.body.result.resolvedQuery,
@@ -342,7 +338,7 @@ server.post('/', (req, res) => {
 
     if (req.body.result.action == 'my-profile') {
         req = 0;
-        rsp = {};
+        let rsp;
         db.any("select * from consumer where user_id=$1 AND weight>0 AND height>0 AND age>0", [user_id])
             .then(data => {
                 proper = properWeight(data[0]['height'])

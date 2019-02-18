@@ -8,12 +8,13 @@ uid=''
 window.onload = function (e) {
 liff.init(function (data) {
     initializeApp(data);
-liff.getProfile()
-.then(prof => {
-    uid = prof.userId
-})
 });
 $('#sendMessage').on('click', function () {
+    liff.getProfile()
+    .then(prof => {
+        uid = prof.userId
+    })
+
     liff.sendMessages([{
         type: 'text',
         text: "Hi there"+uid

@@ -1,0 +1,26 @@
+<div>
+<button id=sendMessage>Send Message</button>
+</div>
+<script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+window.onload = function (e) {
+    liff.init(function (data) {
+        initializeApp(data);
+    });
+};
+$('#sendmessagebutton').on('click', function () {
+    liff.sendMessages([{
+        type: 'text',
+        text: "Hi there"
+    }, {
+        type: 'sticker',
+        packageId: '2',
+        stickerId: '144'
+    }]).then(function () {
+        window.alert("Message sent");
+    }).catch(function (error) {
+        window.alert("Error sending message: " + error);
+    });
+});
+</script>

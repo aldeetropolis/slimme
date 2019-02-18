@@ -8,7 +8,6 @@ window.onload = function (e) {
     liff.init(function (data) {
         initializeApp(data);
     });
-};
 $('#sendmessage').on('click', function () {
     liff.sendMessages([{
         type: 'text',
@@ -23,4 +22,6 @@ $('#sendmessage').on('click', function () {
         window.alert("Error sending message: " + error);
     });
 });
+
+};
 </script>

@@ -94,6 +94,10 @@ server.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/home.html'));
 })
 
+server.get('/liff',(req,res) => {
+    res.sendFile(path.join(__dirname+'/liff.html'));    
+})
+
 server.get('/db', (req, res) => {
     txt = []
     db.any('select * from consumer')
